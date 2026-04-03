@@ -1,13 +1,13 @@
 # Open-Todo CI/CD Pipeline
 #
 # - Pull Request (all branches): lint + test only
-# - Push to main: lint + test, then SSH deploy to server
+# - Push to master: lint + test, then SSH deploy to server
 
 name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
     branches: ['*']
 
@@ -70,12 +70,12 @@ jobs:
         run: npm run build
 
   # ===========================================================================
-  # Deploy — SSH to server (main branch only)
+  # Deploy — SSH to server (master branch only)
   # ===========================================================================
   deploy:
     name: Deploy to Server
     needs: [api-test, web-test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,14 +98,14 @@ jobs:
 
             if [ -d ".git" ]; then
               echo "==> Repository exists. Pulling latest code..."
-              git fetch origin main
-              git reset --hard origin/main
+              git fetch origin master
+              git reset --hard origin/master
             else
               echo "==> Repository does not exist. Initializing and cloning..."
               git init
               git remote add origin "$REPO_URL"
-              git fetch origin main
-              git checkout -t origin/main -f
+              git fetch origin master
+              git checkout -t origin/master -f
             fi
 
             echo "==> Configuring Environment Variables..."
