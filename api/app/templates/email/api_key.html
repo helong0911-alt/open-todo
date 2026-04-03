@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your API Key</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0a0a0a; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#0a0a0a;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#171717; border-radius:8px; border:1px solid #262626;">
+          <!-- Header -->
+          <tr>
+            <td style="padding:32px 40px 16px; border-bottom:1px solid #262626;">
+              <h1 style="margin:0; color:#60a5fa; font-size:24px; font-weight:700;">Open-Todo</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 40px;">
+              <h2 style="margin:0 0 16px; color:#f5f5f5; font-size:20px;">Registration Successful</h2>
+              <p style="margin:0 0 8px; color:#a3a3a3; font-size:14px; line-height:1.6;">
+                Your account has been created. Below is your API key &mdash; use it to log in to Open-Todo.
+              </p>
+              <p style="margin:0 0 24px; color:#a3a3a3; font-size:14px;">
+                Email: <strong style="color:#f5f5f5;">{{ email }}</strong>
+              </p>
+              <!-- API Key box -->
+              <div style="margin:0 0 24px; padding:16px; background-color:#0a0a0a; border:1px solid #262626; border-radius:6px;">
+                <p style="margin:0 0 6px; color:#737373; font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Your API Key</p>
+                <p style="margin:0; color:#34d399; font-size:16px; font-family:monospace; word-break:break-all; line-height:1.5;">{{ api_key }}</p>
+              </div>
+              <p style="margin:0 0 8px; color:#fbbf24; font-size:13px; line-height:1.5;">
+                <strong>Important:</strong> Keep this key safe. It is your only credential for accessing Open-Todo. Do not share it with anyone.
+              </p>
+              <p style="margin:8px 0 0; color:#737373; font-size:12px; line-height:1.5;">
+                If you did not create this account, please ignore this email.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 40px 24px; border-top:1px solid #262626;">
+              <p style="margin:0; color:#525252; font-size:11px; text-align:center;">
+                &copy; Open-Todo (OTD) &mdash; AI-Native Task Infrastructure
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

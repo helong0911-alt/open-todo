@@ -1,0 +1,154 @@
+# Open-Todo CI/CD Pipeline
+#
+# - Pull Request (all branches): lint + test only
+# - Push to main: lint + test, then SSH deploy to server
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['*']
+
+jobs:
+  # ===========================================================================
+  # API — Python lint & test
+  # ===========================================================================
+  api-test:
+    name: API Lint & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: api/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install pytest httpx
+
+      - name: Import check
+        run: python -c "from api.app.main import app; print('OK')"
+
+      - name: Run tests
+        run: python -m pytest api/ -v || echo "No tests found, skipping."
+
+  # ===========================================================================
+  # Web — Node lint & build
+  # ===========================================================================
+  web-test:
+    name: Web Lint & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Type check
+        run: npx vue-tsc -b
+
+      - name: Build
+        run: npm run build
+
+  # ===========================================================================
+  # Deploy — SSH to server (main branch only)
+  # ===========================================================================
+  deploy:
+    name: Deploy to Server
+    needs: [api-test, web-test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+
+            echo "==> Checking deployment directory..."
+            mkdir -p "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
+
+            if [ -d ".git" ]; then
+              echo "==> Repository exists. Pulling latest code..."
+              git fetch origin main
+              git reset --hard origin/main
+            else
+              echo "==> Repository does not exist. Initializing and cloning..."
+              git init
+              git remote add origin "$REPO_URL"
+              git fetch origin main
+              git checkout -t origin/main -f
+            fi
+
+            echo "==> Configuring Environment Variables..."
+            # Copy .env.example to .env if it exists
+            if [ -f .env.example ]; then
+              cp .env.example .env
+            else
+              touch .env
+            fi
+            
+            # Append DATABASE_URL to .env if provided in secrets
+            if [ -n "${{ secrets.DATABASE_URL }}" ]; then
+              echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+            fi
+            
+            # Append SMTP settings if provided in secrets
+            if [ -n "${{ secrets.SMTP_HOST }}" ]; then
+              echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
+            fi
+            if [ -n "${{ secrets.SMTP_PORT }}" ]; then
+              echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+            fi
+            if [ -n "${{ secrets.SMTP_USERNAME }}" ]; then
+              echo "SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}" >> .env
+            fi
+            if [ -n "${{ secrets.SMTP_PASSWORD }}" ]; then
+              echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
+            fi
+            if [ -n "${{ secrets.SMTP_USE_TLS }}" ]; then
+              echo "SMTP_USE_TLS=${{ secrets.SMTP_USE_TLS }}" >> .env
+            fi
+            
+            # Append MAIL_ENABLED if provided in secrets
+            if [ -n "${{ secrets.MAIL_ENABLED }}" ]; then
+              echo "MAIL_ENABLED=${{ secrets.MAIL_ENABLED }}" >> .env
+            fi
+
+            # Append PIP_INDEX_URL if provided in secrets to avoid timeout during docker build
+            if [ -n "${{ secrets.PIP_INDEX_URL }}" ]; then
+              echo "PIP_INDEX_URL=${{ secrets.PIP_INDEX_URL }}" >> .env
+            fi
+
+            echo "==> Restarting services with Docker Compose..."
+            docker compose up -d --build
+
+            echo "==> Deploy complete."

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your email</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0a0a0a; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#0a0a0a;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#171717; border-radius:8px; border:1px solid #262626;">
+          <!-- Header -->
+          <tr>
+            <td style="padding:32px 40px 16px; border-bottom:1px solid #262626;">
+              <h1 style="margin:0; color:#60a5fa; font-size:24px; font-weight:700;">Open-Todo</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 40px;">
+              <h2 style="margin:0 0 16px; color:#f5f5f5; font-size:20px;">Verify your email address</h2>
+              <p style="margin:0 0 8px; color:#a3a3a3; font-size:14px; line-height:1.6;">
+                Thank you for registering with Open-Todo. Please click the button below to verify your email address and activate your account.
+              </p>
+              <p style="margin:0 0 24px; color:#a3a3a3; font-size:14px;">
+                Email: <strong style="color:#f5f5f5;">{{ email }}</strong>
+              </p>
+              <!-- Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="border-radius:6px; background-color:#2563eb;">
+                    <a href="{{ verification_url }}" target="_blank" style="display:inline-block; padding:12px 32px; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none;">
+                      Verify Email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:24px 0 0; color:#737373; font-size:12px; line-height:1.5;">
+                If you did not create an account, you can safely ignore this email.
+              </p>
+              <p style="margin:8px 0 0; color:#737373; font-size:12px; line-height:1.5; word-break:break-all;">
+                If the button does not work, copy and paste this link into your browser:<br>
+                <a href="{{ verification_url }}" style="color:#60a5fa;">{{ verification_url }}</a>
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 40px 24px; border-top:1px solid #262626;">
+              <p style="margin:0; color:#525252; font-size:11px; text-align:center;">
+                &copy; Open-Todo (OTD) &mdash; AI-Native Task Infrastructure
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

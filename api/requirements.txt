@@ -1,0 +1,10 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlmodel>=0.0.14
+pydantic>=2.5.0
+httpx>=0.25.0
+python-dotenv>=1.0.0
+aiosmtplib>=3.0.0
+jinja2>=3.1.0
+captcha>=0.6.0
+bcrypt>=4.0.0

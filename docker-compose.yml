@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL}
+    ports:
+      - "9000:9000"
+    volumes:
+      - otd-data:/app/data
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/otd.db}
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    ports:
+      - "3030:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  otd-data:

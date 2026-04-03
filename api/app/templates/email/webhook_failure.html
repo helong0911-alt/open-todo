@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook Delivery Failed</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0a0a0a; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#0a0a0a;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#171717; border-radius:8px; border:1px solid #262626;">
+          <!-- Header -->
+          <tr>
+            <td style="padding:32px 40px 16px; border-bottom:1px solid #262626;">
+              <h1 style="margin:0; color:#60a5fa; font-size:24px; font-weight:700;">Open-Todo</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 40px;">
+              <h2 style="margin:0 0 16px; color:#fbbf24; font-size:20px;">
+                &#9888; Webhook Delivery Failed
+              </h2>
+              <p style="margin:0 0 16px; color:#a3a3a3; font-size:14px; line-height:1.6;">
+                A webhook delivery has permanently failed after exhausting all retry attempts.
+              </p>
+              <!-- Details table -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:16px 0; background-color:#0a0a0a; border-radius:6px; border:1px solid #262626;">
+                <tr>
+                  <td style="padding:16px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="padding:4px 0; color:#737373; font-size:13px; width:120px;">Webhook URL</td>
+                        <td style="padding:4px 0; color:#f5f5f5; font-size:13px; word-break:break-all;">{{ webhook_url }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; color:#737373; font-size:13px;">Rule ID</td>
+                        <td style="padding:4px 0; color:#f5f5f5; font-size:13px; font-family:monospace;">{{ rule_id }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; color:#737373; font-size:13px;">Task ID</td>
+                        <td style="padding:4px 0; color:#f5f5f5; font-size:13px; font-family:monospace;">{{ task_id }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; color:#737373; font-size:13px;">Retry Count</td>
+                        <td style="padding:4px 0; color:#f87171; font-size:13px; font-weight:600;">{{ retry_count }} / 5</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <!-- Error block -->
+              <div style="margin:16px 0 0; padding:12px 16px; background-color:#1c1917; border-left:3px solid #f87171; border-radius:4px;">
+                <p style="margin:0 0 4px; color:#737373; font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Last Error</p>
+                <p style="margin:0; color:#fca5a5; font-size:13px; font-family:monospace; line-height:1.5; word-break:break-all;">{{ last_error }}</p>
+              </div>
+              <p style="margin:16px 0 0; color:#a3a3a3; font-size:13px; line-height:1.6;">
+                Please check the webhook URL and rule configuration. You can retry the delivery
+                via the <code style="color:#60a5fa; background-color:#1e293b; padding:1px 4px; border-radius:3px;">POST /webhooks/retry</code> endpoint.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 40px 24px; border-top:1px solid #262626;">
+              <p style="margin:0 0 4px; color:#525252; font-size:11px; text-align:center;">
+                You received this email because webhook failure alerts are enabled for your account.
+              </p>
+              <p style="margin:0; color:#525252; font-size:11px; text-align:center;">
+                &copy; Open-Todo (OTD) &mdash; AI-Native Task Infrastructure
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

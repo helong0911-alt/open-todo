@@ -1,0 +1,61 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# mypy
+.mypy_cache/
+
+# SQLite database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ---------- Node / Web ----------
+node_modules/
+web/dist/
+web/.vite/
+*.tsbuildinfo
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- Docker ----------
+docker-compose.override.yml
+.docker/
+
+# ---------- Environment / Secrets ----------
+.env
+.env.*
+!.env.example
+credentials.json
+*.pem
+*.key
+
+# ---------- OS ----------
+*.log
