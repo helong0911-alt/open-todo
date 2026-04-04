@@ -7,11 +7,12 @@
 import { ref } from 'vue'
 import { NButton, NIcon, NPopconfirm, NCheckbox } from 'naive-ui'
 import DynamicFieldRenderer from './DynamicFieldRenderer.vue'
-import type { TodoTreeNode, FieldDefinition } from '@/types'
+import type { TodoTreeNode, FieldDefinition, ProjectMember } from '@/types'
 
 const props = defineProps<{
   node: TodoTreeNode & { depth: number }
   fields: FieldDefinition[]
+  members: ProjectMember[]
 }>()
 
 const emit = defineEmits<{
@@ -78,6 +79,7 @@ const indent = ref(props.node.depth * 24)
       <DynamicFieldRenderer
         :field="field"
         :value="node.content[field.fieldName]"
+        :members="members"
       />
     </td>
 

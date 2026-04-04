@@ -1,16 +1,17 @@
 <script setup lang="ts">
 /**
- * ProjectDetailView — WBS tree-table with schema management.
+ * ProjectDetailView — WBS tree-table with schema and member management.
  * URL-first: project ID comes from route param.
  */
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   NButton, NModal, NCard, NInput, NSelect, NSpin, NEmpty,
-  NForm, NFormItem, NDynamicInput, useMessage
+  NForm, NFormItem, NDynamicInput, NTag, NPopconfirm, useMessage
 } from 'naive-ui'
 import { useProject } from '@/composables/useProject'
 import { useTodos } from '@/composables/useTodos'
+import { useMembers } from '@/composables/useMembers'
 import TodoTreeRow from '@/components/TodoTreeRow.vue'
 import type { FieldDefinition, TodoTreeNode } from '@/types'
 
@@ -21,6 +22,7 @@ const projectId = computed(() => route.params.id as string)
 
 const { activeSchema, schemaLoading, fetchSchema, updateSchema } = useProject()
 const { flatList, loading: todosLoading, fetchTodos, createTodo, updateTodo, deleteTodo, toggleExpand } = useTodos()
+const { members, loading: membersLoading, fetchMembers, addMember, removeMember } = useMembers()
 
 // Schema editor
 const showSchemaEditor = ref(false)
@@ -47,6 +49,50 @@ async function saveSchema() {
   }
 }
 
+// Members management
+const showMembersModal = ref(false)
+const newAgentId = ref('')
+const newDisplayName = ref('')
+const newDescription = ref('')
+const addingMember = ref(false)
+
+function openMembersModal() {
+  showMembersModal.value = true
+}
+
+async function handleAddMember() {
+  if (!newAgentId.value.trim()) {
+    message.warning('Agent ID is required')
+    return
+  }
+  addingMember.value = true
+  try {
+    await addMember(
+      projectId.value,
+      newAgentId.value.trim(),
+      newDisplayName.value.trim() || undefined,
+      newDescription.value.trim() || undefined
+    )
+    newAgentId.value = ''
+    newDisplayName.value = ''
+    newDescription.value = ''
+    message.success('Member added')
+  } catch (err: any) {
+    message.error(err?.response?.data?.detail || 'Failed to add member')
+  } finally {
+    addingMember.value = false
+  }
+}
+
+async function handleRemoveMember(memberId: string) {
+  try {
+    await removeMember(memberId)
+    message.success('Member removed')
+  } catch (err: any) {
+    message.error(err?.response?.data?.detail || 'Failed to remove member')
+  }
+}
+
 // Todo create / edit modal
 const showTodoModal = ref(false)
 const editingTodo = ref<TodoTreeNode | null>(null)
@@ -66,6 +112,15 @@ const fieldTypeOptions = [
   { label: 'link', value: 'link' },
   { label: 'assignee', value: 'assignee' },
 ]
+
+// Assignee select options derived from members
+const assigneeOptions = computed(() =>
+  members.value.map((m) => ({
+    label: m.displayName || m.agentId,
+    value: m.agentId,
+    description: m.description,
+  }))
+)
 
 function openCreateTodo(parentId?: string) {
   editingTodo.value = null
@@ -141,7 +196,10 @@ function stopPolling() {
 // Load data
 onMounted(async () => {
   await fetchSchema(projectId.value)
-  await fetchTodos(projectId.value)
+  await Promise.all([
+    fetchTodos(projectId.value),
+    fetchMembers(projectId.value),
+  ])
   startPolling()
 })
 
@@ -152,7 +210,10 @@ watch(
     if (newId && typeof newId === 'string') {
       stopPolling()
       await fetchSchema(newId)
-      await fetchTodos(newId)
+      await Promise.all([
+        fetchTodos(newId),
+        fetchMembers(newId),
+      ])
       startPolling()
     }
   }
@@ -173,6 +234,10 @@ watch(
       <div class="flex gap-2">
         <n-button size="small" @click="openSchemaEditor">
           Schema
+        </n-button>
+        <n-button size="small" @click="openMembersModal">
+          Members
+          <span v-if="members.length" class="ml-1 text-xs text-gray-400">({{ members.length }})</span>
         </n-button>
         <n-button size="small" @click="() => fetchTodos(projectId)">
           Refresh
@@ -219,6 +284,7 @@ watch(
             :key="node.todoId"
             :node="node"
             :fields="fields"
+            :members="members"
             @toggle="toggleExpand"
             @add-child="openCreateTodo"
             @edit="openEditTodo"
@@ -288,6 +354,76 @@ watch(
       </n-card>
     </n-modal>
 
+    <!-- Members management modal -->
+    <n-modal v-model:show="showMembersModal">
+      <n-card title="Project Members" :bordered="false" style="width: 560px; max-width: 90vw;">
+        <!-- Existing members -->
+        <div class="space-y-2 mb-4">
+          <div v-if="membersLoading" class="py-4 flex justify-center"><n-spin /></div>
+          <div v-else-if="members.length === 0" class="text-sm text-gray-500 py-2">
+            No members registered yet.
+          </div>
+          <div
+            v-for="m in members"
+            :key="m.memberId"
+            class="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded p-3"
+          >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-gray-200 truncate">{{ m.displayName || m.agentId }}</span>
+                <n-tag size="tiny" type="info" round>Agent</n-tag>
+              </div>
+              <div class="text-xs text-gray-500 font-mono mt-0.5">{{ m.agentId }}</div>
+              <div v-if="m.description" class="text-xs text-gray-400 mt-1">{{ m.description }}</div>
+            </div>
+            <n-popconfirm @positive-click="handleRemoveMember(m.memberId)">
+              <template #trigger>
+                <n-button size="tiny" quaternary class="text-red-400">Remove</n-button>
+              </template>
+              Remove this member?
+            </n-popconfirm>
+          </div>
+        </div>
+
+        <!-- Add member form -->
+        <div class="border-t border-gray-800 pt-4">
+          <h4 class="text-sm font-medium text-gray-300 mb-2">Add Member</h4>
+          <div class="space-y-2">
+            <n-input
+              v-model:value="newAgentId"
+              placeholder="Agent ID (required)"
+              size="small"
+            />
+            <n-input
+              v-model:value="newDisplayName"
+              placeholder="Display name (optional)"
+              size="small"
+            />
+            <n-input
+              v-model:value="newDescription"
+              placeholder="Description (optional)"
+              size="small"
+            />
+            <n-button
+              type="primary"
+              size="small"
+              :loading="addingMember"
+              :disabled="!newAgentId.trim()"
+              @click="handleAddMember"
+            >
+              + Add
+            </n-button>
+          </div>
+        </div>
+
+        <template #action>
+          <div class="flex justify-end">
+            <n-button @click="showMembersModal = false">Close</n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
+
     <!-- Todo create/edit modal -->
     <n-modal v-model:show="showTodoModal">
       <n-card
@@ -305,7 +441,7 @@ watch(
               <span v-if="field.fieldDescription" class="text-gray-600"> — {{ field.fieldDescription }}</span>
             </label>
 
-            <!-- enum → select -->
+            <!-- enum -> select -->
             <n-select
               v-if="field.fieldType === 'enum'"
               :value="todoContent[field.fieldName] || null"
@@ -314,6 +450,27 @@ watch(
               placeholder="Select..."
               size="small"
               @update:value="(v: string | null) => todoContent[field.fieldName] = v"
+            />
+
+            <!-- assignee -> select from members (or fallback to text input) -->
+            <n-select
+              v-else-if="field.fieldType === 'assignee' && assigneeOptions.length > 0"
+              :value="todoContent[field.fieldName] || null"
+              :options="assigneeOptions"
+              clearable
+              filterable
+              placeholder="Select assignee..."
+              size="small"
+              @update:value="(v: string | null) => todoContent[field.fieldName] = v"
+            />
+
+            <!-- assignee fallback when no members -->
+            <n-input
+              v-else-if="field.fieldType === 'assignee'"
+              :value="todoContent[field.fieldName] || ''"
+              placeholder="Assignee"
+              size="small"
+              @update:value="(v: string) => todoContent[field.fieldName] = v || undefined"
             />
 
             <!-- number -->
@@ -334,7 +491,7 @@ watch(
               @update:value="(v: string) => todoContent[field.fieldName] = v || undefined"
             />
 
-            <!-- text / link / assignee -->
+            <!-- text / link -->
             <n-input
               v-else
               :value="todoContent[field.fieldName] || ''"

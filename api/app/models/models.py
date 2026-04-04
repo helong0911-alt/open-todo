@@ -10,7 +10,7 @@ from typing import Any, Optional, List, TYPE_CHECKING
 
 from pydantic import ConfigDict
 from sqlmodel import SQLModel, Field, Relationship, Column
-from sqlalchemy import Text, JSON
+from sqlalchemy import Text, JSON, UniqueConstraint
 
 from api.app.core.config import API_KEY_PREFIX
 
@@ -247,6 +247,10 @@ class Project(CamelModel, table=True):
     schema_def: Optional["ProjectSchema"] = Relationship(back_populates="project")
     todos: List["Todo"] = Relationship(back_populates="project")
     webhook_rules: List["WebhookRule"] = Relationship(back_populates="project")
+    members: List["ProjectMember"] = Relationship(
+        back_populates="project",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -365,6 +369,59 @@ class Todo(CamelModel, table=True):
         sa_relationship_kwargs={"remote_side": "Todo.todo_id"},
     )
 
+
+
+# ---------------------------------------------------------------------------
+# ProjectMember (Agent / Human registry per project)
+# ---------------------------------------------------------------------------
+
+class ProjectMember(CamelModel, table=True):
+    """
+    Project member registry.  Each record represents an agent (or future
+    human member) that belongs to a project.  External systems query this
+    table via MCP to discover available agents for task assignment.
+    """
+
+    __tablename__ = "project_member"
+    __table_args__ = (
+        UniqueConstraint("project_id", "agent_id", name="uq_project_member_project_agent"),
+    )
+
+    member_id: str = Field(
+        default_factory=_generate_uuid,
+        primary_key=True,
+        alias="memberId",
+        description="Unique member identifier (UUID, system-generated).",
+    )
+    project_id: str = Field(
+        foreign_key="project.project_id",
+        index=True,
+        alias="projectId",
+        description="Associated project ID.",
+    )
+    agent_id: str = Field(
+        alias="agentId",
+        description="External agent identifier defined by the caller.",
+    )
+    display_name: Optional[str] = Field(
+        default=None,
+        alias="displayName",
+        description="Human-readable display name (optional).",
+    )
+    description: Optional[str] = Field(
+        default=None,
+        sa_column=Column(Text, nullable=True),
+        alias="description",
+        description="Agent introduction or role description (optional).",
+    )
+    created_at: datetime = Field(
+        default_factory=_utcnow,
+        alias="createdAt",
+        description="Member creation timestamp (UTC).",
+    )
+
+    # relationships
+    project: Optional["Project"] = Relationship(back_populates="members")
 
 # ---------------------------------------------------------------------------
 # WebhookRule

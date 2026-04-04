@@ -47,6 +47,14 @@ from api.app.api.schemas import (
     SchemaUpdateRequest,
     FieldDefinition,
 )
+from api.app.api.members import (
+    list_members as _rest_list_members,
+    add_member as _rest_add_member,
+    remove_member as _rest_remove_member,
+    MemberListRequest,
+    MemberAddRequest,
+    MemberRemoveRequest,
+)
 from api.app.api.todos import (
     list_todos as _rest_list_todos,
     create_todo as _rest_create_todo,
@@ -289,6 +297,70 @@ MCP_TOOLS = [
                 },
             },
             "required": ["todoId"],
+        },
+    },
+    {
+        "name": "list_members",
+        "description": (
+            "List all members (agents) registered in a project. "
+            "Returns an array of member objects with memberId, agentId, "
+            "displayName, description, and createdAt."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "projectId": {
+                    "type": "string",
+                    "description": "UUID of the project.",
+                },
+            },
+            "required": ["projectId"],
+        },
+    },
+    {
+        "name": "add_member",
+        "description": (
+            "Add an agent as a member of a project. "
+            "The agentId must be unique within the project. "
+            "displayName and description are optional."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "projectId": {
+                    "type": "string",
+                    "description": "Project ID to add the member to.",
+                },
+                "agentId": {
+                    "type": "string",
+                    "description": "External agent identifier (must be unique within the project).",
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "Human-readable display name (optional).",
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Agent introduction or role description (optional).",
+                },
+            },
+            "required": ["projectId", "agentId"],
+        },
+    },
+    {
+        "name": "remove_member",
+        "description": (
+            "Remove a member (agent) from a project."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "memberId": {
+                    "type": "string",
+                    "description": "Member ID to remove.",
+                },
+            },
+            "required": ["memberId"],
         },
     },
     {
@@ -613,6 +685,12 @@ def _dispatch(name: str, args: dict, user: User, session: Session) -> Any:
         return _do_move_todo(args, user, session)
     elif name == "delete_todo":
         return _do_delete_todo(args, user, session)
+    elif name == "list_members":
+        return _do_list_members(args, user, session)
+    elif name == "add_member":
+        return _do_add_member(args, user, session)
+    elif name == "remove_member":
+        return _do_remove_member(args, user, session)
     elif name == "bulk_create_todos":
         return _do_bulk_create_todos(args, user, session)
     else:
@@ -738,6 +816,45 @@ def _do_bulk_create_todos(args: dict, user: User, session: Session) -> Any:
     ]
     body = TodoBulkCreateRequest(projectId=project_id, items=items)
     result = _rest_bulk_create_todos(body=body, session=session, current_user=user)
+    return result.model_dump() if hasattr(result, "model_dump") else result
+
+
+# ---------------------------------------------------------------------------
+# Member delegate functions
+# ---------------------------------------------------------------------------
+
+def _do_list_members(args: dict, user: User, session: Session) -> Any:
+    project_id = args.get("projectId")
+    if not project_id:
+        raise HTTPException(status_code=400, detail="projectId is required.")
+    body = MemberListRequest(projectId=project_id)
+    result = _rest_list_members(body=body, session=session, current_user=user)
+    return [r.model_dump() if hasattr(r, "model_dump") else r for r in result]
+
+
+def _do_add_member(args: dict, user: User, session: Session) -> Any:
+    project_id = args.get("projectId")
+    if not project_id:
+        raise HTTPException(status_code=400, detail="projectId is required.")
+    agent_id = args.get("agentId")
+    if not agent_id:
+        raise HTTPException(status_code=400, detail="agentId is required.")
+    body = MemberAddRequest(
+        projectId=project_id,
+        agentId=agent_id,
+        displayName=args.get("displayName"),
+        description=args.get("description"),
+    )
+    result = _rest_add_member(body=body, session=session, current_user=user)
+    return result.model_dump() if hasattr(result, "model_dump") else result
+
+
+def _do_remove_member(args: dict, user: User, session: Session) -> Any:
+    member_id = args.get("memberId")
+    if not member_id:
+        raise HTTPException(status_code=400, detail="memberId is required.")
+    body = MemberRemoveRequest(memberId=member_id)
+    result = _rest_remove_member(body=body, session=session, current_user=user)
     return result.model_dump() if hasattr(result, "model_dump") else result
 
 

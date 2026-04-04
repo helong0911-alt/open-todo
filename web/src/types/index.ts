@@ -171,3 +171,20 @@ export interface NotificationRule {
   enabled: boolean
   createdAt: string
 }
+
+
+// ---------- Project Members ----------
+
+export interface ProjectMember {
+  memberId: string
+  projectId: string
+  agentId: string
+  displayName?: string
+  description?: string
+  createdAt: string
+}
+
+export interface MemberRemoveResult {
+  detail: string
+  memberId: string
+}

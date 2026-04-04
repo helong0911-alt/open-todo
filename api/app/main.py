@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.app.core.config import API_TITLE, API_DESCRIPTION, API_VERSION
 from api.app.core.database import create_db_and_tables
 from api.app.api import auth, projects, schemas, todos, webhooks
-from api.app.api import automation, mcp, notifications, api_keys
+from api.app.api import automation, mcp, notifications, api_keys, members
 from api.app.worker.outbox import start_outbox_worker, stop_outbox_worker
 from api.app.worker.email_worker import start_email_worker, stop_email_worker
 
@@ -67,6 +67,7 @@ app.include_router(webhooks.router)
 app.include_router(automation.router)
 app.include_router(mcp.router)
 app.include_router(notifications.router)
+app.include_router(members.router)
 app.include_router(api_keys.router)
 
 

@@ -10,11 +10,12 @@
  */
 import { computed } from 'vue'
 import { NTag, NAvatar } from 'naive-ui'
-import type { FieldDefinition } from '@/types'
+import type { FieldDefinition, ProjectMember } from '@/types'
 
 const props = defineProps<{
   field: FieldDefinition
   value: any
+  members?: ProjectMember[]
 }>()
 
 const displayValue = computed(() => {
@@ -52,6 +53,22 @@ const enumTagType = computed(() => {
 const avatarInitial = computed(() => {
   if (!props.value) return '?'
   return String(props.value).charAt(0).toUpperCase()
+})
+
+const resolvedAssignee = computed(() => {
+  if (!props.value) return { display: '—', initial: '?' }
+  const val = String(props.value)
+  const ms = props.members ?? []
+  if (ms.length === 0) return { display: val, initial: val.charAt(0).toUpperCase() }
+  const member =
+    ms.find((m) => m.memberId === val) ||
+    ms.find((m) => m.agentId === val) ||
+    ms.find((m) => m.displayName === val)
+  if (member) {
+    const display = member.displayName || member.agentId
+    return { display, initial: display.charAt(0).toUpperCase() }
+  }
+  return { display: val, initial: val.charAt(0).toUpperCase() }
 })
 </script>
 
@@ -95,9 +112,9 @@ const avatarInitial = computed(() => {
   <!-- assignee -->
   <span v-else-if="field.fieldType === 'assignee'" class="inline-flex items-center gap-1.5">
     <n-avatar :size="22" round class="bg-blue-700 text-xs">
-      {{ avatarInitial }}
+      {{ resolvedAssignee.initial }}
     </n-avatar>
-    <span class="text-gray-200 text-sm">{{ displayValue }}</span>
+    <span class="text-gray-200 text-sm">{{ resolvedAssignee.display }}</span>
   </span>
 
   <!-- fallback -->

@@ -35,6 +35,8 @@ import type {
   WebhookLogsResponse,
   WebhookRetryResponse,
   NotificationRule,
+  ProjectMember,
+  MemberRemoveResult,
 } from '@/types'
 
 const http = axios.create({
@@ -176,3 +178,19 @@ export const notificationRulesList = () =>
 
 export const notificationRulesDelete = (ruleId: string) =>
   http.post<{ detail: string; ruleId: string }>('/notifications/rules/delete', { ruleId }).then((r) => r.data)
+
+
+// ---- Members ----
+export const membersList = (projectId: string) =>
+  http.post<ProjectMember[]>('/members/list', { projectId }).then((r) => r.data)
+
+export const membersAdd = (
+  projectId: string,
+  agentId: string,
+  displayName?: string,
+  description?: string
+) =>
+  http.post<ProjectMember>('/members/add', { projectId, agentId, displayName, description }).then((r) => r.data)
+
+export const membersRemove = (memberId: string) =>
+  http.post<MemberRemoveResult>('/members/remove', { memberId }).then((r) => r.data)

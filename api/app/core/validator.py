@@ -11,12 +11,11 @@ it in `_TYPE_VALIDATORS` to support additional field types.
 import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from urllib.parse import urlparse
 
 from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from api.app.models.models import ProjectSchema
+from api.app.models.models import ProjectSchema, ProjectMember
 
 
 # ---------------------------------------------------------------------------
@@ -24,13 +23,13 @@ from api.app.models.models import ProjectSchema
 # ---------------------------------------------------------------------------
 # Each returns None on success, or an error string on failure.
 
-def _validate_text(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_text(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     if not isinstance(value, str):
         return f"must be a text string"
     return None
 
 
-def _validate_number(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_number(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     if isinstance(value, bool):
         # bool is subclass of int in Python; reject it explicitly
         return f"must be a number (integer or float), got boolean"
@@ -39,7 +38,7 @@ def _validate_number(value: Any, fd: Dict[str, Any]) -> Optional[str]:
     return None
 
 
-def _validate_date(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_date(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     if not isinstance(value, str):
         return f"must be an ISO 8601 date string, got {type(value).__name__}"
     # Accept: 2024-01-15, 2024-01-15T10:30:00, 2024-01-15T10:30:00Z,
@@ -62,7 +61,7 @@ def _validate_date(value: Any, fd: Dict[str, Any]) -> Optional[str]:
     return f"must be a valid ISO 8601 date string (e.g. 2024-01-15 or 2024-01-15T10:30:00Z)"
 
 
-def _validate_enum(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_enum(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     enum_values = fd.get("enumValues", [])
     if not isinstance(value, str):
         return f"must be a string matching one of: {enum_values}"
@@ -77,23 +76,72 @@ _URL_REGEX = re.compile(
 )
 
 
-def _validate_link(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_link(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     if not isinstance(value, str):
         return f"must be a URL string, got {type(value).__name__}"
     if not _URL_REGEX.match(value):
         return f"must be a valid URL starting with http:// or https://"
+    from urllib.parse import urlparse
     parsed = urlparse(value)
     if not parsed.scheme or not parsed.netloc:
         return f"must be a valid URL with scheme and host"
     return None
 
 
-def _validate_assignee(value: Any, fd: Dict[str, Any]) -> Optional[str]:
+def _validate_assignee(value: Any, fd: Dict[str, Any], **kwargs) -> Optional[str]:
     if not isinstance(value, str):
-        return f"must be a string (user ID or identifier), got {type(value).__name__}"
+        return f"must be a string (member ID or agent ID), got {type(value).__name__}"
     if not value.strip():
         return f"must not be empty"
-    return None
+
+    # When session and project_id are available, validate against project members
+    session = kwargs.get("session")
+    project_id = kwargs.get("project_id")
+    if session is None or project_id is None:
+        return None
+
+    # Check if the project has any members registered
+    member_count = len(session.exec(
+        select(ProjectMember.member_id).where(
+            ProjectMember.project_id == project_id
+        )
+    ).all())
+
+    # No members registered -> fall back to loose validation (backwards compat)
+    if member_count == 0:
+        return None
+
+    # Match by member_id
+    by_id = session.exec(
+        select(ProjectMember).where(
+            ProjectMember.project_id == project_id,
+            ProjectMember.member_id == value,
+        )
+    ).first()
+    if by_id is not None:
+        return None
+
+    # Match by agent_id
+    by_agent = session.exec(
+        select(ProjectMember).where(
+            ProjectMember.project_id == project_id,
+            ProjectMember.agent_id == value,
+        )
+    ).first()
+    if by_agent is not None:
+        return None
+
+    # Match by display_name
+    by_name = session.exec(
+        select(ProjectMember).where(
+            ProjectMember.project_id == project_id,
+            ProjectMember.display_name == value,
+        )
+    ).first()
+    if by_name is not None:
+        return None
+
+    return f"must be a valid project member (member ID, agent ID, or display name), got '{value}'"
 
 
 # ---------------------------------------------------------------------------
@@ -168,7 +216,7 @@ def validate_content(
             # Unknown type in schema definition — skip
             continue
 
-        err = validator_fn(value, fd)
+        err = validator_fn(value, fd, session=session, project_id=project_id)
         if err is not None:
             hint = f" ({description})" if description else ""
             errors.append({
