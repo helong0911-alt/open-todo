@@ -158,7 +158,7 @@ api/
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| `POST` | `/todos/list` | API key | List todos for a project (flat array, JIT healed in-memory) |
+| `POST` | `/todos/list` | API key | List todos for a project or all projects (flat array, JIT healed) |
 | `POST` | `/todos/create` | API key | Create a todo (schema-validated, webhook outbox, email notify) |
 | `POST` | `/todos/update` | API key | Update todo (OCC, deep diff, JIT heal write-back, webhooks) |
 | `POST` | `/todos/move` | API key | Reparent a todo (circular-ref check, OCC) |

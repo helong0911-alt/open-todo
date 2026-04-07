@@ -107,7 +107,7 @@ Open-Todo 实现了标准的 **MCP Streamable HTTP 传输协议**（[2025-03-26 
 | 2 | `create_project` | 创建新项目 |
 | 3 | `get_project_schema` | 获取项目的动态字段 Schema |
 | 4 | `update_project_schema` | 替换项目的字段 Schema |
-| 5 | `list_todos` | 列出项目的所有 Todo（扁平数组，通过 `parentId` 构建树） |
+| 5 | `list_todos` | 列出项目的所有 Todo，省略 `projectId` 时返回所有项目的 Todo |
 | 6 | `create_todo` | 创建 Todo，内容经过 Schema 验证 |
 | 7 | `update_todo` | 更新内容/状态，支持 OCC 和深度差异比较 |
 | 8 | `move_todo` | 在项目内重新挂载 Todo |

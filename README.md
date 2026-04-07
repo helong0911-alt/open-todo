@@ -107,7 +107,7 @@ Open-Todo implements the **MCP Streamable HTTP transport** ([2025-03-26 spec](ht
 | 2 | `create_project` | Create a new project |
 | 3 | `get_project_schema` | Get a project's dynamic field schema |
 | 4 | `update_project_schema` | Replace a project's field schema |
-| 5 | `list_todos` | List all todos for a project (flat array, build tree via `parentId`) |
+| 5 | `list_todos` | List todos for a project, or all projects if `projectId` is omitted |
 | 6 | `create_todo` | Create a todo with schema-validated content |
 | 7 | `update_todo` | Update content/status with OCC and deep-diff |
 | 8 | `move_todo` | Reparent a todo within its project |

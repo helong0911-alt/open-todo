@@ -157,7 +157,7 @@ api/
 
 | 方法 | 路径 | 认证 | 说明 |
 |------|------|------|------|
-| `POST` | `/todos/list` | API 密钥 | 列出项目的任务（扁平数组，内存中 JIT 自愈） |
+| `POST` | `/todos/list` | API 密钥 | 列出项目或所有项目的任务（扁平数组，内存中 JIT 自愈） |
 | `POST` | `/todos/create` | API 密钥 | 创建任务（Schema 验证、Webhook 发件箱、邮件通知） |
 | `POST` | `/todos/update` | API 密钥 | 更新任务（OCC、深度差异、JIT 自愈写回、Webhook） |
 | `POST` | `/todos/move` | API 密钥 | 重新挂载任务（循环引用检测、OCC） |

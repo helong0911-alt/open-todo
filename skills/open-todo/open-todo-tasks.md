@@ -23,10 +23,10 @@ Open-Todo uses an infinite-level WBS (Work Breakdown Structure) tree. Nodes with
 If your environment has the Open-Todo MCP server connected, use the following tools:
 
 ### `list_todos`
-- **Description**: Retrieves all tasks for a project.
+- **Description**: Retrieves all tasks for a project, or all tasks across all projects if `projectId` is omitted.
 - **Arguments**:
-  - `projectId` (string, required): UUID of the project.
-- **Returns**: A flat array of todos. Group by `parentId` to reconstruct the tree.
+  - `projectId` (string, optional): UUID of the project. If omitted, returns todos from all projects owned by the user.
+- **Returns**: A flat array of todos. Group by `parentId` to reconstruct the tree. Each todo includes a `projectId` field to identify which project it belongs to.
 
 ### `create_todo`
 - **Description**: Creates a new task.
