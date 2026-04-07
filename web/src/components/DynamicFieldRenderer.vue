@@ -74,17 +74,17 @@ const resolvedAssignee = computed(() => {
 
 <template>
   <!-- text -->
-  <span v-if="field.fieldType === 'text'" class="text-gray-200">
+  <span v-if="field.fieldType === 'text'" class="text-gray-800 dark:text-gray-200">
     {{ displayValue }}
   </span>
 
   <!-- number -->
-  <span v-else-if="field.fieldType === 'number'" class="text-gray-200 font-mono">
+  <span v-else-if="field.fieldType === 'number'" class="text-gray-800 dark:text-gray-200 font-mono">
     {{ displayValue }}
   </span>
 
   <!-- date -->
-  <span v-else-if="field.fieldType === 'date'" class="text-gray-300">
+  <span v-else-if="field.fieldType === 'date'" class="text-gray-700 dark:text-gray-300">
     {{ formattedDate }}
   </span>
 
@@ -104,7 +104,7 @@ const resolvedAssignee = computed(() => {
     :href="value || '#'"
     target="_blank"
     rel="noopener noreferrer"
-    class="text-blue-400 hover:text-blue-300 underline"
+    class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline"
   >
     {{ displayValue }}
   </a>
@@ -114,9 +114,9 @@ const resolvedAssignee = computed(() => {
     <n-avatar :size="22" round class="bg-blue-700 text-xs">
       {{ resolvedAssignee.initial }}
     </n-avatar>
-    <span class="text-gray-200 text-sm">{{ resolvedAssignee.display }}</span>
+    <span class="text-gray-800 dark:text-gray-200 text-sm">{{ resolvedAssignee.display }}</span>
   </span>
 
   <!-- fallback -->
-  <span v-else class="text-gray-400">{{ displayValue }}</span>
+  <span v-else class="text-gray-500 dark:text-gray-400">{{ displayValue }}</span>
 </template>

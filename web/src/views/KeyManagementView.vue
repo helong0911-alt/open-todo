@@ -164,20 +164,20 @@ onMounted(fetchKeys)
 <template>
   <div class="max-w-6xl mx-auto">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-gray-100">API Keys</h2>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">API Keys</h2>
       <n-button type="primary" @click="showCreateModal = true">
         Create Key
       </n-button>
     </div>
 
-    <p class="text-sm text-gray-400 mb-6">
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
       API keys are used for programmatic access to the Open-Todo API.
-      Send your key as the <code class="text-blue-400">X-API-KEY</code> header.
+      Send your key as the <code class="text-blue-600 dark:text-blue-400">X-API-KEY</code> header.
     </p>
 
     <!-- Key list -->
-    <div v-if="loading" class="text-gray-500 text-center py-8">Loading...</div>
-    <div v-else-if="keys.length === 0" class="text-gray-500 text-center py-8">
+    <div v-if="loading" class="text-gray-400 dark:text-gray-500 text-center py-8">Loading...</div>
+    <div v-else-if="keys.length === 0" class="text-gray-400 dark:text-gray-500 text-center py-8">
       No API keys yet. Create one to get started.
     </div>
     <div v-else class="space-y-3">
@@ -185,7 +185,7 @@ onMounted(fetchKeys)
         v-for="key in keys"
         :key="key.keyId"
         size="small"
-        class="bg-gray-900 border-gray-700"
+        class="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
       >
         <div class="flex items-center justify-between">
           <div class="flex-1 min-w-0">
@@ -207,7 +207,7 @@ onMounted(fetchKeys)
                 </n-button>
               </template>
               <template v-else>
-                <span class="text-gray-100 font-medium">{{ key.keyName }}</span>
+                <span class="text-gray-900 dark:text-gray-100 font-medium">{{ key.keyName }}</span>
                 <n-tag v-if="key.isSystem" size="small" type="info">System</n-tag>
                 <n-tag
                   :type="key.isEnabled ? 'success' : 'warning'"
@@ -219,12 +219,12 @@ onMounted(fetchKeys)
             </div>
 
             <!-- Masked key -->
-            <div class="text-xs text-gray-500 font-mono">
+            <div class="text-xs text-gray-400 dark:text-gray-500 font-mono">
               {{ key.keyValueMasked }}
             </div>
 
             <!-- Created at -->
-            <div class="text-xs text-gray-600 mt-1">
+            <div class="text-xs text-gray-400 dark:text-gray-600 mt-1">
               Created {{ new Date(key.createdAt).toLocaleDateString() }}
             </div>
           </div>
@@ -258,7 +258,7 @@ onMounted(fetchKeys)
     <n-modal v-model:show="showCreateModal" preset="dialog" title="Create API Key">
       <div class="space-y-4">
         <div>
-          <label class="block text-sm text-gray-400 mb-1">Key Name</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Key Name</label>
           <n-input
             v-model:value="newKeyName"
             placeholder="e.g. My Script, CI/CD Pipeline"
@@ -283,11 +283,11 @@ onMounted(fetchKeys)
     <!-- Created key display modal -->
     <n-modal v-model:show="showCreatedKey" preset="dialog" title="API Key Created">
       <div class="space-y-4">
-        <p class="text-sm text-gray-400">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
           Copy your API key now. You won't be able to see it again.
         </p>
         <div class="flex items-center gap-2">
-          <code class="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-green-400 text-sm font-mono break-all">
+          <code class="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-green-600 dark:text-green-400 text-sm font-mono break-all">
             {{ createdKeyValue }}
           </code>
           <n-button size="small" type="primary" @click="copyToClipboard(createdKeyValue)">

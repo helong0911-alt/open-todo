@@ -269,8 +269,8 @@ watch(
         <n-button quaternary size="small" @click="router.push('/')">
           &larr; Projects
         </n-button>
-        <h2 class="text-xl font-semibold text-gray-100">WBS Tree</h2>
-        <span class="text-xs text-gray-500 font-mono">{{ projectId.slice(0, 8) }}</span>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">WBS Tree</h2>
+        <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">{{ projectId.slice(0, 8) }}</span>
       </div>
       <div class="flex gap-2">
         <n-button size="small" @click="openProjectInfoModal">
@@ -281,7 +281,7 @@ watch(
         </n-button>
         <n-button size="small" @click="openMembersModal">
           Members
-          <span v-if="members.length" class="ml-1 text-xs text-gray-400">({{ members.length }})</span>
+          <span v-if="members.length" class="ml-1 text-xs text-gray-500 dark:text-gray-400">({{ members.length }})</span>
         </n-button>
         <n-button size="small" @click="() => fetchTodos(projectId)">
           Refresh
@@ -294,19 +294,19 @@ watch(
 
     <!-- Project info bar -->
     <div v-if="currentProject?.projectDirectory || currentProject?.gitUrl" class="mb-4 flex flex-wrap gap-x-4 gap-y-1 px-1">
-      <span v-if="currentProject?.projectDirectory" class="text-xs text-gray-500 font-mono truncate max-w-md" :title="currentProject.projectDirectory">
+      <span v-if="currentProject?.projectDirectory" class="text-xs text-gray-400 dark:text-gray-500 font-mono truncate max-w-md" :title="currentProject.projectDirectory">
         Dir: {{ currentProject.projectDirectory }}
       </span>
-      <span v-if="currentProject?.gitUrl" class="text-xs text-gray-500 font-mono truncate max-w-md" :title="currentProject.gitUrl">
+      <span v-if="currentProject?.gitUrl" class="text-xs text-gray-400 dark:text-gray-500 font-mono truncate max-w-md" :title="currentProject.gitUrl">
         Git: {{ currentProject.gitUrl }}
       </span>
     </div>
 
     <!-- Schema info -->
     <div v-if="schemaLoading" class="py-4 flex justify-center"><n-spin /></div>
-    <div v-else-if="fields.length === 0" class="mb-4 p-3 bg-gray-900 border border-gray-800 rounded text-sm text-gray-400">
+    <div v-else-if="fields.length === 0" class="mb-4 p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded text-sm text-gray-500 dark:text-gray-400">
       No schema fields defined.
-      <button class="text-blue-400 hover:underline ml-1" @click="openSchemaEditor">Configure schema</button>
+      <button class="text-blue-600 dark:text-blue-400 hover:underline ml-1" @click="openSchemaEditor">Configure schema</button>
       to add dynamic fields.
     </div>
 
@@ -318,7 +318,7 @@ watch(
     <div v-else class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
-          <tr class="border-b border-gray-700 text-left text-gray-400">
+          <tr class="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
             <th class="px-3 py-2 font-medium min-w-[280px]">
               {{ fields.length > 0 ? fields[0].fieldName : 'Task' }}
             </th>
@@ -356,7 +356,7 @@ watch(
           <div
             v-for="(field, idx) in editingFields"
             :key="idx"
-            class="flex items-start gap-2 bg-gray-900 border border-gray-800 rounded p-3"
+            class="flex items-start gap-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded p-3"
           >
             <div class="flex-1 space-y-2">
               <n-input v-model:value="field.fieldName" placeholder="Field name" size="small" />
@@ -414,21 +414,21 @@ watch(
         <!-- Existing members -->
         <div class="space-y-2 mb-4">
           <div v-if="membersLoading" class="py-4 flex justify-center"><n-spin /></div>
-          <div v-else-if="members.length === 0" class="text-sm text-gray-500 py-2">
+          <div v-else-if="members.length === 0" class="text-sm text-gray-400 dark:text-gray-500 py-2">
             No members registered yet.
           </div>
           <div
             v-for="m in members"
             :key="m.memberId"
-            class="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded p-3"
+            class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded p-3"
           >
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <span class="font-medium text-gray-200 truncate">{{ m.displayName || m.agentId }}</span>
+                <span class="font-medium text-gray-800 dark:text-gray-200 truncate">{{ m.displayName || m.agentId }}</span>
                 <n-tag size="tiny" type="info" round>Agent</n-tag>
               </div>
-              <div class="text-xs text-gray-500 font-mono mt-0.5">{{ m.agentId }}</div>
-              <div v-if="m.description" class="text-xs text-gray-400 mt-1">{{ m.description }}</div>
+              <div class="text-xs text-gray-400 dark:text-gray-500 font-mono mt-0.5">{{ m.agentId }}</div>
+              <div v-if="m.description" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ m.description }}</div>
             </div>
             <n-popconfirm @positive-click="handleRemoveMember(m.memberId)">
               <template #trigger>
@@ -440,8 +440,8 @@ watch(
         </div>
 
         <!-- Add member form -->
-        <div class="border-t border-gray-800 pt-4">
-          <h4 class="text-sm font-medium text-gray-300 mb-2">Add Member</h4>
+        <div class="border-t border-gray-200 dark:border-gray-800 pt-4">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Add Member</h4>
           <div class="space-y-2">
             <n-input
               v-model:value="newAgentId"
@@ -486,13 +486,13 @@ watch(
         style="width: 500px; max-width: 90vw;"
       >
         <div class="space-y-3">
-          <div v-if="fields.length === 0" class="text-sm text-gray-400 mb-2">
+          <div v-if="fields.length === 0" class="text-sm text-gray-500 dark:text-gray-400 mb-2">
             No schema fields. Data will be saved as raw JSON.
           </div>
           <div v-for="field in fields" :key="field.fieldName">
-            <label class="block text-xs text-gray-400 mb-1">
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">
               {{ field.fieldName }}
-              <span v-if="field.fieldDescription" class="text-gray-600"> — {{ field.fieldDescription }}</span>
+              <span v-if="field.fieldDescription" class="text-gray-400 dark:text-gray-600"> — {{ field.fieldDescription }}</span>
             </label>
 
             <!-- enum -> select -->
@@ -583,7 +583,7 @@ watch(
       <n-card title="Project Info" :bordered="false" style="width: 500px; max-width: 90vw;">
         <div class="space-y-3">
           <div>
-            <label class="block text-xs text-gray-400 mb-1">Project Name</label>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Project Name</label>
             <n-input
               v-model:value="editProjectName"
               placeholder="Project name"
@@ -591,7 +591,7 @@ watch(
             />
           </div>
           <div>
-            <label class="block text-xs text-gray-400 mb-1">Description</label>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Description</label>
             <n-input
               v-model:value="editProjectDescription"
               type="textarea"
@@ -601,7 +601,7 @@ watch(
             />
           </div>
           <div>
-            <label class="block text-xs text-gray-400 mb-1">Project Directory</label>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Project Directory</label>
             <n-input
               v-model:value="editProjectDirectory"
               placeholder="/path/to/project"
@@ -609,7 +609,7 @@ watch(
             />
           </div>
           <div>
-            <label class="block text-xs text-gray-400 mb-1">Git URL</label>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Git URL</label>
             <n-input
               v-model:value="editGitUrl"
               placeholder="https://github.com/user/repo.git"

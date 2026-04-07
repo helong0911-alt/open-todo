@@ -7,3 +7,10 @@ html, body, #app {
   margin: 0;
   padding: 0;
 }
+
+/* Smooth theme transitions */
+html, body,
+.bg-gray-50, .bg-white, .bg-gray-100, .bg-gray-900, .bg-gray-950,
+header, main, section, div, span, p, a, button, input, textarea, code, table, tr, td, th {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

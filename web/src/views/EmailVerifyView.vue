@@ -33,16 +33,16 @@ function goToLogin() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-950 p-4">
-    <div class="w-full max-w-md bg-gray-900 border border-gray-700 rounded-lg p-8 text-center">
-      <h1 class="text-2xl font-bold text-blue-400 mb-6">Open-Todo</h1>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
+    <div class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
+      <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">Open-Todo</h1>
 
       <!-- Loading -->
       <div v-if="status === 'loading'">
         <div class="flex justify-center mb-4">
-          <div class="w-10 h-10 border-4 border-gray-600 border-t-blue-400 rounded-full animate-spin"></div>
+          <div class="w-10 h-10 border-4 border-gray-300 dark:border-gray-600 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
         </div>
-        <p class="text-gray-400">Verifying your email...</p>
+        <p class="text-gray-500 dark:text-gray-400">Verifying your email...</p>
       </div>
 
       <!-- Success -->
@@ -52,11 +52,11 @@ function goToLogin() {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 class="text-xl font-semibold text-green-400 mb-2">Email Verified</h2>
-        <p class="text-gray-400 text-sm mb-1">
+        <h2 class="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Email Verified</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">
           Your account has been activated successfully.
         </p>
-        <p v-if="email" class="text-gray-500 text-xs mb-6">{{ email }}</p>
+        <p v-if="email" class="text-gray-400 dark:text-gray-500 text-xs mb-6">{{ email }}</p>
         <button
           class="px-8 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           @click="goToLogin"
@@ -72,8 +72,8 @@ function goToLogin() {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
-        <h2 class="text-xl font-semibold text-red-400 mb-2">Verification Failed</h2>
-        <p class="text-gray-400 text-sm mb-6">{{ errorMsg }}</p>
+        <h2 class="text-xl font-semibold text-red-500 dark:text-red-400 mb-2">Verification Failed</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">{{ errorMsg }}</p>
         <button
           class="px-8 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           @click="goToLogin"

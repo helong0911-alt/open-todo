@@ -54,23 +54,23 @@ onMounted(fetchRules)
 
 <template>
   <div class="max-w-6xl mx-auto">
-    <h2 class="text-xl font-bold text-gray-100 mb-2">Notifications</h2>
-    <p class="text-sm text-gray-400 mb-6">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Notifications</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
       Toggle email notifications for task and webhook events.
     </p>
 
-    <div v-if="loading" class="text-gray-500 text-center py-8">Loading...</div>
+    <div v-if="loading" class="text-gray-400 dark:text-gray-500 text-center py-8">Loading...</div>
     <div v-else class="space-y-3">
       <n-card
         v-for="evt in EVENT_TYPES"
         :key="evt.value"
         size="small"
-        class="bg-gray-900 border-gray-700"
+        class="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
       >
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-gray-100 font-medium">{{ evt.label }}</span>
-            <div class="text-xs text-gray-500 mt-1">{{ evt.description }}</div>
+            <span class="text-gray-900 dark:text-gray-100 font-medium">{{ evt.label }}</span>
+            <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ evt.description }}</div>
           </div>
           <n-switch
             :value="!!ruleMap[evt.value]"

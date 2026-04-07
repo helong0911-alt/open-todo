@@ -27,14 +27,14 @@ const indent = ref(props.node.depth * 24)
 </script>
 
 <template>
-  <tr class="border-b border-gray-800 hover:bg-gray-900/50 transition-colors">
+  <tr class="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
     <!-- Tree column: indent + expand toggle + first field or ID -->
     <td class="px-3 py-2 whitespace-nowrap">
       <div class="flex items-center" :style="{ paddingLeft: indent + 'px' }">
         <!-- Expand/collapse button -->
         <button
           v-if="node.children && node.children.length > 0"
-          class="w-5 h-5 mr-1 flex items-center justify-center text-gray-400 hover:text-gray-200"
+          class="w-5 h-5 mr-1 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           @click="emit('toggle', node.todoId)"
         >
           <svg
@@ -57,14 +57,14 @@ const indent = ref(props.node.depth * 24)
 
         <!-- First field value or todoId snippet -->
         <span
-          class="text-gray-200 truncate max-w-[200px]"
-          :class="{ 'line-through text-gray-500': node.isCompleted }"
+          class="text-gray-800 dark:text-gray-200 truncate max-w-[200px]"
+          :class="{ 'line-through text-gray-400 dark:text-gray-500': node.isCompleted }"
         >
           <template v-if="fields.length > 0 && node.content[fields[0].fieldName]">
             {{ node.content[fields[0].fieldName] }}
           </template>
           <template v-else>
-            <span class="text-gray-500 font-mono text-xs">{{ node.todoId.slice(0, 8) }}</span>
+            <span class="text-gray-400 dark:text-gray-500 font-mono text-xs">{{ node.todoId.slice(0, 8) }}</span>
           </template>
         </span>
       </div>

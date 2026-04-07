@@ -3,6 +3,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NConfigProvider, NMessageProvider, darkTheme } from 'naive-ui'
 import { authCaptcha, authLogin, authRegister, authLogout, authMe, onUnauthorized } from '@/api'
+import { useTheme } from '@/composables/useTheme'
+
+const { isDark, toggleTheme } = useTheme()
 
 const router = useRouter()
 const route = useRoute()
@@ -196,30 +199,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-config-provider :theme="darkTheme">
+  <n-config-provider :theme="isDark ? darkTheme : undefined">
     <n-message-provider>
   <!-- Public pages (e.g. email verification) — bypass login overlay -->
-  <div v-if="isPublicPage" class="min-h-screen bg-gray-950 text-gray-100">
+  <div v-if="isPublicPage" class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
     <router-view />
   </div>
 
   <!-- Setup / Login / Register overlay -->
-  <div v-else-if="showSetup" class="min-h-screen flex items-center justify-center bg-gray-950 p-4">
-    <div class="w-full max-w-md bg-gray-900 border border-gray-700 rounded-lg p-8">
-      <h1 class="text-2xl font-bold text-gray-100 mb-6">Open-Todo (OTD)</h1>
+  <div v-else-if="showSetup" class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
+    <div class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Open-Todo (OTD)</h1>
 
       <!-- Tab switcher -->
-      <div class="flex mb-6 border-b border-gray-700">
+      <div class="flex mb-6 border-b border-gray-200 dark:border-gray-700">
         <button
           class="flex-1 pb-2 text-sm font-medium text-center transition-colors"
-          :class="activeTab === 'login' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-500 hover:text-gray-300'"
+          :class="activeTab === 'login' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'"
           @click="switchTab('login')"
         >
           Login
         </button>
         <button
           class="flex-1 pb-2 text-sm font-medium text-center transition-colors"
-          :class="activeTab === 'register' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-500 hover:text-gray-300'"
+          :class="activeTab === 'register' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'"
           @click="switchTab('register')"
         >
           Register
@@ -230,40 +233,40 @@ onMounted(async () => {
       <!-- Login tab -->
       <!-- ============================================================= -->
       <div v-if="activeTab === 'login'">
-        <label class="block text-sm text-gray-400 mb-2">Email</label>
+        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Email</label>
         <input
           v-model="loginEmail"
           type="email"
           placeholder="you@example.com"
-          class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
           @keyup.enter="handleLogin"
         />
 
-        <label class="block text-sm text-gray-400 mb-2">Password</label>
+        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Password</label>
         <input
           v-model="loginPassword"
           type="password"
           placeholder="Enter your password"
-          class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
           @keyup.enter="handleLogin"
         />
 
         <!-- Captcha -->
-        <label class="block text-sm text-gray-400 mb-2">Captcha</label>
+        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Captcha</label>
         <div class="flex items-center gap-3 mb-4">
           <div class="h-[38px] flex items-center">
             <img
               v-if="captchaImage"
               :src="'data:image/png;base64,' + captchaImage"
               alt="captcha"
-              class="h-[38px] rounded border border-gray-600"
+              class="h-[38px] rounded border border-gray-300 dark:border-gray-600"
             />
-            <div v-else class="h-[38px] w-[120px] bg-gray-800 border border-gray-600 rounded flex items-center justify-center">
-              <span class="text-xs text-gray-500">Loading...</span>
+            <div v-else class="h-[38px] w-[120px] bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded flex items-center justify-center">
+              <span class="text-xs text-gray-400 dark:text-gray-500">Loading...</span>
             </div>
           </div>
           <button
-            class="text-sm text-blue-400 hover:text-blue-300"
+            class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
             :disabled="captchaLoading"
             @click="loadCaptcha"
           >
@@ -274,7 +277,7 @@ onMounted(async () => {
           v-model="captchaCode"
           type="text"
           placeholder="Enter captcha code"
-          class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
           @keyup.enter="handleLogin"
         />
 
@@ -286,7 +289,7 @@ onMounted(async () => {
           {{ loginLoading ? 'Logging in...' : 'Login' }}
         </button>
 
-        <p class="mt-3 text-xs text-gray-500 text-center">
+          <p class="mt-3 text-xs text-gray-400 dark:text-gray-500 text-center">
           Default account: admin / admin123
         </p>
       </div>
@@ -297,8 +300,8 @@ onMounted(async () => {
       <div v-if="activeTab === 'register'">
         <!-- Success message -->
         <div v-if="registerSuccess" class="text-center py-4">
-          <div class="text-green-400 text-lg font-semibold mb-2">Registration Successful</div>
-          <p class="text-gray-400 text-sm mb-4">
+          <div class="text-green-600 dark:text-green-400 text-lg font-semibold mb-2">Registration Successful</div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">
             Please check your email to verify your account, then log in with your email and password.
           </p>
           <button
@@ -311,40 +314,40 @@ onMounted(async () => {
 
         <!-- Register form -->
         <div v-else>
-          <label class="block text-sm text-gray-400 mb-2">Email</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Email</label>
           <input
             v-model="registerEmail"
             type="email"
             placeholder="you@example.com"
-            class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleRegister"
           />
 
-          <label class="block text-sm text-gray-400 mb-2">Password</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Password</label>
           <input
             v-model="registerPassword"
             type="password"
             placeholder="Min 6 characters"
-            class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleRegister"
           />
 
           <!-- Captcha -->
-          <label class="block text-sm text-gray-400 mb-2">Captcha</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Captcha</label>
           <div class="flex items-center gap-3 mb-4">
             <div class="h-[38px] flex items-center">
               <img
                 v-if="captchaImage"
                 :src="'data:image/png;base64,' + captchaImage"
                 alt="captcha"
-                class="h-[38px] rounded border border-gray-600"
+                class="h-[38px] rounded border border-gray-300 dark:border-gray-600"
               />
-              <div v-else class="h-[38px] w-[120px] bg-gray-800 border border-gray-600 rounded flex items-center justify-center">
-                <span class="text-xs text-gray-500">Loading...</span>
+              <div v-else class="h-[38px] w-[120px] bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded flex items-center justify-center">
+                <span class="text-xs text-gray-400 dark:text-gray-500">Loading...</span>
               </div>
             </div>
             <button
-              class="text-sm text-blue-400 hover:text-blue-300"
+              class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
               :disabled="captchaLoading"
               @click="loadCaptcha"
             >
@@ -355,7 +358,7 @@ onMounted(async () => {
             v-model="captchaCode"
             type="text"
             placeholder="Enter captcha code"
-            class="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleRegister"
           />
 
@@ -367,7 +370,7 @@ onMounted(async () => {
             {{ registerLoading ? 'Registering...' : 'Register' }}
           </button>
 
-          <p class="mt-3 text-xs text-gray-500 text-center">
+        <p class="mt-3 text-xs text-gray-400 dark:text-gray-500 text-center">
             A verification email will be sent after registration.
           </p>
         </div>
@@ -376,48 +379,63 @@ onMounted(async () => {
   </div>
 
   <!-- Main app -->
-  <div v-else class="min-h-screen bg-gray-950 text-gray-100">
+  <div v-else class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
     <!-- Top nav bar -->
-    <header class="bg-gray-900 border-b border-gray-800">
+    <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
       <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <router-link to="/" class="text-lg font-bold text-blue-400 hover:text-blue-300">
+          <router-link to="/" class="text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
             OTD
           </router-link>
-          <span class="text-gray-500">/</span>
-          <span class="text-gray-300">{{ pageTitle }}</span>
+          <span class="text-gray-300 dark:text-gray-500">/</span>
+          <span class="text-gray-700 dark:text-gray-300">{{ pageTitle }}</span>
         </div>
         <div class="flex items-center gap-4">
           <router-link
             to="/"
-            class="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             Projects
           </router-link>
           <router-link
             to="/keys"
-            class="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             API Keys
           </router-link>
           <router-link
             to="/notifications"
-            class="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             Notifications
           </router-link>
-          <span class="text-xs text-gray-500 font-mono">{{ userEmail }}</span>
+          <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">{{ userEmail }}</span>
           <router-link
             to="/user-center"
-            class="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             User Center
           </router-link>
           <button
-            class="text-sm text-gray-400 hover:text-red-400"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
             @click="logout"
           >
             Logout
+          </button>
+          <!-- Theme toggle -->
+          <button
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-yellow-500 dark:hover:text-yellow-300 transition-colors"
+            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleTheme"
+          >
+            <svg v-if="isDark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
           </button>
         </div>
       </div>

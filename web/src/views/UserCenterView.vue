@@ -58,43 +58,43 @@ async function handleChangePassword() {
 <template>
   <div class="max-w-3xl mx-auto py-8 px-4">
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-100">User Center</h1>
-      <p class="text-sm text-gray-400 mt-1">Manage your account profile and security.</p>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">User Center</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your account profile and security.</p>
     </div>
 
-    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
-      <h2 class="text-xl font-semibold mb-6 text-gray-100 border-b border-gray-800 pb-2">Change Password</h2>
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-800 pb-2">Change Password</h2>
       
       <div class="space-y-4 max-w-md">
         <div>
-          <label class="block text-sm text-gray-400 mb-2">Current Password</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Current Password</label>
           <input
             v-model="oldPassword"
             type="password"
             placeholder="Current password"
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleChangePassword"
           />
         </div>
         
         <div>
-          <label class="block text-sm text-gray-400 mb-2">New Password</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">New Password</label>
           <input
             v-model="newPassword"
             type="password"
             placeholder="New password"
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleChangePassword"
           />
         </div>
         
         <div>
-          <label class="block text-sm text-gray-400 mb-2">Confirm New Password</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Confirm New Password</label>
           <input
             v-model="confirmPassword"
             type="password"
             placeholder="Confirm new password"
-            class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500"
             @keyup.enter="handleChangePassword"
           />
         </div>

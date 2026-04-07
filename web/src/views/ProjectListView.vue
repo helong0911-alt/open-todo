@@ -48,7 +48,7 @@ onMounted(() => {
 <template>
   <div class="max-w-6xl mx-auto">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-gray-100">Projects</h2>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Projects</h2>
       <n-button type="primary" @click="showCreate = !showCreate">
         {{ showCreate ? 'Cancel' : '+ New Project' }}
       </n-button>
@@ -100,20 +100,20 @@ onMounted(() => {
       <div
         v-for="p in projects"
         :key="p.projectId"
-        class="bg-gray-900 border border-gray-800 rounded-lg p-4 cursor-pointer hover:border-gray-600 transition-colors"
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 transition-colors"
         @click="goToProject(p.projectId)"
       >
         <div class="flex items-center justify-between">
           <div class="min-w-0 flex-1">
-            <h3 class="text-gray-100 font-medium">{{ p.projectName }}</h3>
-            <p v-if="p.projectDescription" class="text-sm text-gray-400 mt-1">
+            <h3 class="text-gray-900 dark:text-gray-100 font-medium">{{ p.projectName }}</h3>
+            <p v-if="p.projectDescription" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {{ p.projectDescription }}
             </p>
             <div v-if="p.projectDirectory || p.gitUrl" class="flex flex-wrap gap-x-4 gap-y-1 mt-2">
-              <span v-if="p.projectDirectory" class="text-xs text-gray-500 font-mono truncate max-w-xs" :title="p.projectDirectory">
+              <span v-if="p.projectDirectory" class="text-xs text-gray-400 dark:text-gray-500 font-mono truncate max-w-xs" :title="p.projectDirectory">
                 Dir: {{ p.projectDirectory }}
               </span>
-              <span v-if="p.gitUrl" class="text-xs text-gray-500 font-mono truncate max-w-xs" :title="p.gitUrl">
+              <span v-if="p.gitUrl" class="text-xs text-gray-400 dark:text-gray-500 font-mono truncate max-w-xs" :title="p.gitUrl">
                 Git: {{ p.gitUrl }}
               </span>
             </div>
@@ -121,12 +121,12 @@ onMounted(() => {
           <div class="flex gap-2 ml-4 shrink-0">
             <router-link
               :to="`/project/${p.projectId}/automation`"
-              class="text-xs text-gray-500 hover:text-blue-400"
+              class="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
               @click.stop
             >
               Automation
             </router-link>
-            <span class="text-gray-600 text-xs font-mono">{{ p.projectId.slice(0, 8) }}</span>
+            <span class="text-gray-400 dark:text-gray-600 text-xs font-mono">{{ p.projectId.slice(0, 8) }}</span>
           </div>
         </div>
       </div>

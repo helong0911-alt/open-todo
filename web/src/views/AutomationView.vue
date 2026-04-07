@@ -123,15 +123,15 @@ onMounted(() => {
         <n-button quaternary size="small" @click="router.push('/')">
           &larr; Projects
         </n-button>
-        <h2 class="text-xl font-semibold text-gray-100">Automation</h2>
-        <span class="text-xs text-gray-500 font-mono">{{ projectId.slice(0, 8) }}</span>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Automation</h2>
+        <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">{{ projectId.slice(0, 8) }}</span>
       </div>
     </div>
 
     <!-- Webhook Rules Section -->
     <section class="mb-8">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-medium text-gray-200">Webhook Rules</h3>
+        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Webhook Rules</h3>
         <n-button size="small" @click="showCreateRule = !showCreateRule">
           {{ showCreateRule ? 'Cancel' : '+ New Rule' }}
         </n-button>
@@ -142,7 +142,7 @@ onMounted(() => {
         <div class="space-y-3">
           <div class="grid grid-cols-3 gap-3">
             <div>
-              <label class="block text-xs text-gray-400 mb-1">Event Type</label>
+              <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Event Type</label>
               <n-select
                 v-model:value="newEventType"
                 :options="eventTypeOptions"
@@ -150,7 +150,7 @@ onMounted(() => {
               />
             </div>
             <div>
-              <label class="block text-xs text-gray-400 mb-1">Target Field</label>
+              <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Target Field</label>
               <n-input
                 v-model:value="newTargetField"
                 placeholder="* for all"
@@ -158,7 +158,7 @@ onMounted(() => {
               />
             </div>
             <div>
-              <label class="block text-xs text-gray-400 mb-1">Webhook URL</label>
+              <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Webhook URL</label>
               <n-input
                 v-model:value="newWebhookUrl"
                 placeholder="https://..."
@@ -186,21 +186,21 @@ onMounted(() => {
         <div
           v-for="rule in rules"
           :key="rule.ruleId"
-          class="bg-gray-900 border border-gray-800 rounded p-3 flex items-center justify-between"
+          class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded p-3 flex items-center justify-between"
         >
           <div class="flex items-center gap-3">
             <n-tag :type="rule.eventType === 'Create' ? 'success' : rule.eventType === 'Update' ? 'info' : 'error'" size="small">
               {{ rule.eventType }}
             </n-tag>
-            <span class="text-gray-300 text-sm">
-              field: <code class="text-blue-400">{{ rule.targetField }}</code>
+            <span class="text-gray-700 dark:text-gray-300 text-sm">
+              field: <code class="text-blue-600 dark:text-blue-400">{{ rule.targetField }}</code>
             </span>
-            <span class="text-gray-500 text-xs">&rarr;</span>
-            <span class="text-gray-400 text-sm font-mono truncate max-w-[300px]">
+            <span class="text-gray-400 dark:text-gray-500 text-xs">&rarr;</span>
+            <span class="text-gray-500 dark:text-gray-400 text-sm font-mono truncate max-w-[300px]">
               {{ rule.webhookUrl }}
             </span>
           </div>
-          <span class="text-xs text-gray-600 font-mono">{{ rule.ruleId.slice(0, 8) }}</span>
+          <span class="text-xs text-gray-400 dark:text-gray-600 font-mono">{{ rule.ruleId.slice(0, 8) }}</span>
         </div>
       </div>
     </section>
@@ -208,9 +208,9 @@ onMounted(() => {
     <!-- Audit Log Section -->
     <section>
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-medium text-gray-200">
+        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
           Audit Log
-          <span v-if="logsTotal > 0" class="text-sm text-gray-500 font-normal ml-2">({{ logsTotal }})</span>
+          <span v-if="logsTotal > 0" class="text-sm text-gray-400 dark:text-gray-500 font-normal ml-2">({{ logsTotal }})</span>
         </h3>
         <n-button size="small" @click="fetchLogs">Refresh</n-button>
       </div>
@@ -229,13 +229,13 @@ onMounted(() => {
           <div class="text-sm space-y-1">
             <div class="flex items-center gap-2">
               <n-tag :type="statusColor(log.status)" size="small">{{ log.status }}</n-tag>
-              <span class="text-gray-500 font-mono text-xs">{{ log.webhookUrl }}</span>
+              <span class="text-gray-400 dark:text-gray-500 font-mono text-xs">{{ log.webhookUrl }}</span>
             </div>
-            <div v-if="log.retryCount > 0" class="text-xs text-gray-500">
+            <div v-if="log.retryCount > 0" class="text-xs text-gray-400 dark:text-gray-500">
               Retries: {{ log.retryCount }}
               <span v-if="log.nextRetryAt"> | Next: {{ new Date(log.nextRetryAt).toLocaleString() }}</span>
             </div>
-            <div v-if="log.lastError" class="text-xs text-red-400 font-mono bg-gray-900 p-1 rounded">
+            <div v-if="log.lastError" class="text-xs text-red-500 dark:text-red-400 font-mono bg-gray-100 dark:bg-gray-900 p-1 rounded">
               {{ log.lastError }}
             </div>
             <n-button
