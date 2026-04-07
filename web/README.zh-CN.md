@@ -2,7 +2,7 @@
 
 > [English](./README.md) | [返回项目根目录](../README.zh-CN.md)
 
-Open-Todo 的 Vue 3 Web 应用——暗色主题 WBS 树表格界面，支持动态字段渲染、Schema 编辑、验证码登录/注册、API 密钥管理、邮箱验证和 Webhook 自动化仪表板。
+Open-Todo 的 Vue 3 Web 应用——支持亮/暗主题切换的 WBS 树表格界面，支持动态字段渲染、Schema 编辑、验证码登录/注册、API 密钥管理、邮箱验证和 Webhook 自动化仪表板。
 
 ---
 
@@ -60,7 +60,7 @@ web/
 ├── src/
 │   ├── main.ts                    # Vue 应用启动（Pinia、Naive UI、Router）
 │   ├── App.vue                    # 根组件（认证覆盖层 + 导航框架）
-│   ├── style.css                  # Tailwind 指令 + 基础样式
+│   ├── style.css                  # Tailwind 指令 + 基础样式 + 主题过渡动画
 │   ├── api/
 │   │   └── index.ts               # Axios 客户端、全部 API 函数、X-API-KEY + X-SESSION-TOKEN 拦截器
 │   ├── components/
@@ -68,7 +68,8 @@ web/
 │   │   └── DynamicFieldRenderer.vue  # 按类型渲染字段值（标签、链接、头像等）
 │   ├── composables/
 │   │   ├── useProject.ts          # 共享项目 + Schema 状态（单例 ref 模式）
-│   │   └── useTodos.ts            # 共享任务树状态 + CRUD 操作
+│   │   ├── useTodos.ts            # 共享任务树状态 + CRUD 操作
+│   │   └── useTheme.ts            # 亮/暗主题状态 + 切换（单例 ref 模式）
 │   ├── router/
 │   │   └── index.ts               # Vue Router（5 个路由，懒加载视图）
 │   ├── types/
@@ -109,7 +110,7 @@ web/
 - **动态渲染**：`DynamicFieldRenderer` 根据字段类型自动选择 UI（枚举→`NTag`、链接→超链接、负责人→`NAvatar`、日期→格式化字符串、数字→等宽字体）。
 - **树构建**：API 返回的扁平任务列表在客户端通过 `treeBuilder.ts` 转换为嵌套树。展开状态在数据刷新时保留。
 - **轮询**：`ProjectDetailView` 每 10 秒自动刷新任务数据。
-- **暗色主题**：默认暗色主题（`<html class="dark">`），gray-950 背景，gray-900 卡片，blue-400 强调色。全局应用 Naive UI `darkTheme`。
+- **主题切换**：通过 `useTheme` composable 实现亮/暗主题切换。偏好持久化到 `localStorage`（`otd_theme` 键），回退到系统 `prefers-color-scheme`。Tailwind `darkMode: 'class'` 配合双类名（`bg-white dark:bg-gray-900`）。Naive UI 主题响应式切换（`isDark ? darkTheme : undefined`）。配色方案：暗色 = gray-950 背景、gray-900 卡片、blue-400 强调色；亮色 = gray-50/white 背景、white 卡片、blue-600 强调色。导航栏中提供切换按钮（太阳/月亮图标）。
 - **验证码**：登录和注册均需在提交前完成图形验证码验证。
 
 ## 视图详情

@@ -21,7 +21,7 @@ api/                        # FastAPI API (Python 3.11+)
 web/                        # Vue 3 + Vite web (TypeScript strict)
   src/views/                 # 5 views (PascalCase)
   src/components/            # 2 reusable components
-  src/composables/           # Singleton-pattern state (useProject, useTodos)
+  src/composables/           # Singleton-pattern state (useProject, useTodos, useTheme)
   src/api/index.ts           # Axios client + all API functions
   src/types/index.ts         # All TypeScript interfaces
 skills/                     # MCP/AI skill documentation
@@ -183,5 +183,5 @@ export function useItems() {          // returns functions operating on shared s
 - Error extraction: `err?.response?.data?.detail || 'Fallback message'`.
 - Display: Naive UI `useMessage()` in views, `window.alert()` in App.vue.
 - Naive UI components (NButton, NInput, NCard, NModal, NTag, etc.).
-- Dark mode default (`<html class="dark">`), color palette: gray-950 bg, gray-900 cards, blue-400 accents.
+- Light/dark theme toggle via `useTheme` composable. Persists to `localStorage`, falls back to system `prefers-color-scheme`. Tailwind `darkMode: 'class'` with dual classes (`bg-white dark:bg-gray-900`). Naive UI theme switches reactively (`isDark ? darkTheme : undefined`). Color palette: dark = gray-950 bg, gray-900 cards, blue-400 accents; light = gray-50/white bg, white cards, blue-600 accents.
 - Responsive containers: `max-w-3xl`/`max-w-4xl`/`max-w-6xl mx-auto`.

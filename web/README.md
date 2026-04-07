@@ -2,7 +2,7 @@
 
 > [中文文档](./README.zh-CN.md) | [Back to project root](../README.md)
 
-Vue 3 web application for Open-Todo -- a dark-mode WBS tree-table interface with dynamic field rendering, schema editing, captcha-based login/registration, API key management, email verification, and webhook automation dashboard.
+Vue 3 web application for Open-Todo -- a WBS tree-table interface with light/dark theme toggle, dynamic field rendering, schema editing, captcha-based login/registration, API key management, email verification, and webhook automation dashboard.
 
 ---
 
@@ -60,7 +60,7 @@ web/
 ├── src/
 │   ├── main.ts                    # Vue app bootstrap (Pinia, Naive UI, Router)
 │   ├── App.vue                    # Root component (auth overlay + navigation shell)
-│   ├── style.css                  # Tailwind directives + base styles
+│   ├── style.css                  # Tailwind directives + base styles + theme transitions
 │   ├── api/
 │   │   └── index.ts               # Axios client, all API functions, X-API-KEY + X-SESSION-TOKEN interceptors
 │   ├── components/
@@ -68,7 +68,8 @@ web/
 │   │   └── DynamicFieldRenderer.vue  # Renders field values by type (tag, link, avatar, etc.)
 │   ├── composables/
 │   │   ├── useProject.ts          # Shared project + schema state (singleton ref pattern)
-│   │   └── useTodos.ts            # Shared todo tree state + CRUD operations
+│   │   ├── useTodos.ts            # Shared todo tree state + CRUD operations
+│   │   └── useTheme.ts            # Light/dark theme state + toggle (singleton ref pattern)
 │   ├── router/
 │   │   └── index.ts               # Vue Router (5 routes, lazy-loaded views)
 │   ├── types/
@@ -111,7 +112,7 @@ web/
 - **Dynamic rendering**: `DynamicFieldRenderer` auto-selects UI for each field type (enum as `NTag`, link as hyperlink, assignee as `NAvatar`, date as formatted string, number in monospace).
 - **Tree building**: Flat todo list from API is converted to nested tree client-side via `treeBuilder.ts`. Expanded state is preserved across data refreshes.
 - **Polling**: `ProjectDetailView` auto-refreshes todo data every 10 seconds.
-- **Dark mode**: Default dark theme (`<html class="dark">`), gray-950 background, gray-900 cards, blue-400 accents. Naive UI `darkTheme` applied globally.
+- **Theme switching**: Light/dark theme toggle via `useTheme` composable. Persists preference to `localStorage` (`otd_theme` key), falls back to system `prefers-color-scheme`. Tailwind `darkMode: 'class'` with dual classes (`bg-white dark:bg-gray-900`). Naive UI theme switches reactively (`isDark ? darkTheme : undefined`). Color palette: dark = gray-950 bg, gray-900 cards, blue-400 accents; light = gray-50/white bg, white cards, blue-600 accents. Toggle button (sun/moon icon) in navbar.
 - **Captcha**: Login and registration both require solving an image captcha before submission.
 
 ## Views Detail
