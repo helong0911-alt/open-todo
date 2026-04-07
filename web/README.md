@@ -117,7 +117,7 @@ web/
 ## Views Detail
 
 ### ProjectListView
-Browse all user projects. Collapsible create form for new projects. Click to navigate into WBS tree. Shows project name, description, automation link, and truncated project ID.
+Browse all user projects. Collapsible create form for new projects. Click to navigate into WBS tree. Shows project name, description, directory, git URL, automation link, and truncated project ID.
 
 ### ProjectDetailView
 Full WBS tree-table with dynamic column headers from schema fields. Supports expand/collapse, todo CRUD (create root/child, edit, delete with confirmation), completion toggle, schema editor modal with field type dropdowns and enum value management. 10-second auto-polling.

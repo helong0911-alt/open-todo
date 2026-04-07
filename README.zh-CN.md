@@ -99,20 +99,24 @@ Open-Todo 实现了标准的 **MCP Streamable HTTP 传输协议**（[2025-03-26 
 | `/mcp/tools` | GET | 无 | 工具发现 |
 | `/mcp/tools/call` | POST | `X-API-KEY` | 工具调用 |
 
-### 可用工具（10 个）
+### 可用工具（14 个）
 
 | # | 工具 | 说明 |
 |---|------|------|
 | 1 | `list_projects` | 列出用户拥有的所有项目 |
 | 2 | `create_project` | 创建新项目 |
-| 3 | `get_project_schema` | 获取项目的动态字段 Schema |
-| 4 | `update_project_schema` | 替换项目的字段 Schema |
-| 5 | `list_todos` | 列出项目的所有 Todo，省略 `projectId` 时返回所有项目的 Todo |
-| 6 | `create_todo` | 创建 Todo，内容经过 Schema 验证 |
-| 7 | `update_todo` | 更新内容/状态，支持 OCC 和深度差异比较 |
-| 8 | `move_todo` | 在项目内重新挂载 Todo |
-| 9 | `delete_todo` | 递归删除 Todo 及其所有后代 |
-| 10 | `bulk_create_todos` | 在单个事务中批量创建多个 Todo |
+| 3 | `update_project` | 更新项目元数据（名称、描述、目录、Git URL） |
+| 4 | `get_project_schema` | 获取项目的动态字段 Schema |
+| 5 | `update_project_schema` | 替换项目的字段 Schema |
+| 6 | `list_todos` | 列出项目的所有 Todo，省略 `projectId` 时返回所有项目的 Todo |
+| 7 | `create_todo` | 创建 Todo，内容经过 Schema 验证 |
+| 8 | `update_todo` | 更新内容/状态，支持 OCC 和深度差异比较 |
+| 9 | `move_todo` | 在项目内重新挂载 Todo |
+| 10 | `delete_todo` | 递归删除 Todo 及其所有后代 |
+| 11 | `bulk_create_todos` | 在单个事务中批量创建多个 Todo |
+| 12 | `list_members` | 列出项目中注册的所有成员（Agent） |
+| 13 | `add_member` | 将 Agent 添加为项目成员 |
+| 14 | `remove_member` | 从项目中移除成员（Agent） |
 
 > **注意**: Webhook 规则、Webhook 投递日志和邮件通知规则通过 Web 后台管理，不作为 MCP 工具暴露。
 

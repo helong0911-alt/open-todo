@@ -109,7 +109,7 @@ api/
 | `User` | `user` | Email+password auth, `is_active` flag, verification token |
 | `ApiKey` | `api_key` | `sk-otd-*` keys with enable/disable/soft-delete lifecycle |
 | `SessionToken` | `session_token` | `ses-*` tokens for web login sessions |
-| `Project` | `project` | User-owned projects with name and description |
+| `Project` | `project` | User-owned projects with name, description, directory, and git URL |
 | `ProjectSchema` | `project_schema` | Dynamic field definitions + monotonic `schemaVersion` |
 | `Todo` | `todo` | Self-referencing tree (WBS), JSON content, OCC `version`, `schemaVersion` |
 | `WebhookRule` | `webhook_rule` | Project-scoped event rules (Create/Update/Delete + target field) |
@@ -146,6 +146,15 @@ api/
 |--------|------|------|-------------|
 | `GET` | `/projects` | API key | List user's projects |
 | `POST` | `/projects/create` | API key | Create a project |
+| `POST` | `/projects/update` | API key | Update project metadata (name, description, directory, git URL) |
+
+### Members
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `POST` | `/members/list` | API key | List all members (agents) in a project |
+| `POST` | `/members/add` | API key | Add an agent as a project member |
+| `POST` | `/members/remove` | API key | Remove a member from a project |
 
 ### Schemas
 

@@ -99,20 +99,24 @@ Open-Todo implements the **MCP Streamable HTTP transport** ([2025-03-26 spec](ht
 | `/mcp/tools` | GET | None | Tool discovery |
 | `/mcp/tools/call` | POST | `X-API-KEY` | Tool invocation |
 
-### Available Tools (10)
+### Available Tools (14)
 
 | # | Tool | Description |
 |---|------|-------------|
 | 1 | `list_projects` | List all projects owned by the user |
 | 2 | `create_project` | Create a new project |
-| 3 | `get_project_schema` | Get a project's dynamic field schema |
-| 4 | `update_project_schema` | Replace a project's field schema |
-| 5 | `list_todos` | List todos for a project, or all projects if `projectId` is omitted |
-| 6 | `create_todo` | Create a todo with schema-validated content |
-| 7 | `update_todo` | Update content/status with OCC and deep-diff |
-| 8 | `move_todo` | Reparent a todo within its project |
-| 9 | `delete_todo` | Delete a todo and all descendants recursively |
-| 10 | `bulk_create_todos` | Batch-create multiple todos in a single transaction |
+| 3 | `update_project` | Update project metadata (name, description, directory, git URL) |
+| 4 | `get_project_schema` | Get a project's dynamic field schema |
+| 5 | `update_project_schema` | Replace a project's field schema |
+| 6 | `list_todos` | List todos for a project, or all projects if `projectId` is omitted |
+| 7 | `create_todo` | Create a todo with schema-validated content |
+| 8 | `update_todo` | Update content/status with OCC and deep-diff |
+| 9 | `move_todo` | Reparent a todo within its project |
+| 10 | `delete_todo` | Delete a todo and all descendants recursively |
+| 11 | `bulk_create_todos` | Batch-create multiple todos in a single transaction |
+| 12 | `list_members` | List all members (agents) registered in a project |
+| 13 | `add_member` | Add an agent as a member of a project |
+| 14 | `remove_member` | Remove a member (agent) from a project |
 
 > **Note**: Webhook rules, webhook delivery logs, and email notification rules are managed exclusively through the web dashboard and are not exposed as MCP tools.
 

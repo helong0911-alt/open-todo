@@ -109,7 +109,7 @@ api/
 | `User` | `user` | 邮箱+密码认证，`is_active` 标志，验证令牌 |
 | `ApiKey` | `api_key` | `sk-otd-*` 密钥，支持启用/禁用/软删除生命周期 |
 | `SessionToken` | `session_token` | `ses-*` Web 登录会话令牌 |
-| `Project` | `project` | 用户拥有的项目，含名称和描述 |
+| `Project` | `project` | 用户拥有的项目，含名称、描述、目录和 Git URL |
 | `ProjectSchema` | `project_schema` | 动态字段定义 + 单调递增 `schemaVersion` |
 | `Todo` | `todo` | 自引用树（WBS），JSON 内容，OCC `version`，`schemaVersion` |
 | `WebhookRule` | `webhook_rule` | 项目级事件规则（Create/Update/Delete + 目标字段） |
@@ -145,6 +145,15 @@ api/
 |------|------|------|------|
 | `GET` | `/projects` | API 密钥 | 列出用户的项目 |
 | `POST` | `/projects/create` | API 密钥 | 创建项目 |
+| `POST` | `/projects/update` | API 密钥 | 更新项目元数据（名称、描述、目录、Git URL） |
+
+### 成员
+
+| 方法 | 路径 | 认证 | 说明 |
+|------|------|------|------|
+| `POST` | `/members/list` | API 密钥 | 列出项目中的所有成员（Agent） |
+| `POST` | `/members/add` | API 密钥 | 将 Agent 添加为项目成员 |
+| `POST` | `/members/remove` | API 密钥 | 从项目中移除成员 |
 
 ### Schema
 
