@@ -241,6 +241,16 @@ class Project(CamelModel, table=True):
         alias="projectDescription",
         description="Optional project description.",
     )
+    project_directory: Optional[str] = Field(
+        default=None,
+        alias="projectDirectory",
+        description="Local filesystem directory path for the project.",
+    )
+    git_url: Optional[str] = Field(
+        default=None,
+        alias="gitUrl",
+        description="Git repository URL for the project.",
+    )
 
     # relationships
     user: Optional["User"] = Relationship(back_populates="projects")

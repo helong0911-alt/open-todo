@@ -14,7 +14,7 @@ Each `.md` file is a self-contained skill that can be loaded by an AI coding age
 
 | File | Name | Description |
 |------|------|-------------|
-| `open-todo-projects.md` | Open-Todo Project Manager | Create and list projects |
+| `open-todo-projects.md` | Open-Todo Project Manager | Create, list, and update projects |
 | `open-todo-schemas.md` | Open-Todo Schema Designer | Design and update project field schemas |
 | `open-todo-tasks.md` | Open-Todo Task Manager | Create, update, delete, and query todos |
 

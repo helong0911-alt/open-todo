@@ -4,7 +4,7 @@ This directory provides standardized skills for AI agents (Cursor, Windsurf, Ope
 
 | Skill Name | File | Triggers | Description |
 |------------|------|----------|-------------|
-| **Open-Todo Project Manager** | [open-todo-projects.md](./open-todo-projects.md) | `list projects`, `create project`, `open-todo projects` | List existing projects or create new isolated projects. |
+| **Open-Todo Project Manager** | [open-todo-projects.md](./open-todo-projects.md) | `list projects`, `create project`, `update project`, `open-todo projects` | List, create, or update isolated projects. |
 | **Open-Todo Schema Designer** | [open-todo-schemas.md](./open-todo-schemas.md) | `design schema`, `update schema`, `project schema`, `field definition` | Design, fetch, and update the dynamic validation schema and fields for a specific project. |
 | **Open-Todo Task Manager** | [open-todo-tasks.md](./open-todo-tasks.md) | `manage todos`, `create task`, `update task`, `delete task`, `list tasks`, `complete task`, `move task`, `bulk create` | Perform complex task scheduling: create, update (OCC), move (reparent/prevent circular-refs), and recursive delete. |
 

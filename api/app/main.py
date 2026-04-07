@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.app.core.config import API_TITLE, API_DESCRIPTION, API_VERSION
-from api.app.core.database import create_db_and_tables
+from api.app.core.database import create_db_and_tables, engine
 from api.app.api import auth, projects, schemas, todos, webhooks
 from api.app.api import automation, mcp, notifications, api_keys, members
 from api.app.worker.outbox import start_outbox_worker, stop_outbox_worker
@@ -21,6 +21,31 @@ logging.basicConfig(
     format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
 )
 
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Database migration helpers
+# ---------------------------------------------------------------------------
+
+def _run_migrations():
+    """Add missing columns to existing tables (idempotent ALTER TABLE)."""
+    from sqlalchemy import text, inspect
+
+    with engine.connect() as conn:
+        inspector = inspect(conn)
+        project_columns = [c["name"] for c in inspector.get_columns("project")]
+
+        if "project_directory" not in project_columns:
+            conn.execute(text("ALTER TABLE project ADD COLUMN project_directory TEXT"))
+            logger.info("Migration: added column 'project_directory' to 'project' table.")
+
+        if "git_url" not in project_columns:
+            conn.execute(text("ALTER TABLE project ADD COLUMN git_url TEXT"))
+            logger.info("Migration: added column 'git_url' to 'project' table.")
+
+        conn.commit()
+
 
 # ---------------------------------------------------------------------------
 # Lifespan
@@ -29,6 +54,7 @@ logging.basicConfig(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
+    _run_migrations()
     await start_outbox_worker()
     await start_email_worker()
     yield

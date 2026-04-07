@@ -86,6 +86,8 @@ export interface Project {
   userId: string
   projectName: string
   projectDescription: string | null
+  projectDirectory: string | null
+  gitUrl: string | null
 }
 
 export interface FieldDefinition {

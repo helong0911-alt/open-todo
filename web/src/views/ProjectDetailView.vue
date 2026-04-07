@@ -20,7 +20,7 @@ const router = useRouter()
 const message = useMessage()
 const projectId = computed(() => route.params.id as string)
 
-const { activeSchema, schemaLoading, fetchSchema, updateSchema } = useProject()
+const { projects, activeSchema, schemaLoading, fetchSchema, updateSchema, updateProject } = useProject()
 const { flatList, loading: todosLoading, fetchTodos, createTodo, updateTodo, deleteTodo, toggleExpand } = useTodos()
 const { members, loading: membersLoading, fetchMembers, addMember, removeMember } = useMembers()
 
@@ -55,6 +55,47 @@ const newAgentId = ref('')
 const newDisplayName = ref('')
 const newDescription = ref('')
 const addingMember = ref(false)
+
+// Project info
+const currentProject = computed(() =>
+  projects.value.find((p) => p.projectId === projectId.value) ?? null
+)
+const showProjectInfoModal = ref(false)
+const editProjectName = ref('')
+const editProjectDescription = ref('')
+const editProjectDirectory = ref('')
+const editGitUrl = ref('')
+const savingProjectInfo = ref(false)
+
+function openProjectInfoModal() {
+  editProjectName.value = currentProject.value?.projectName ?? ''
+  editProjectDescription.value = currentProject.value?.projectDescription ?? ''
+  editProjectDirectory.value = currentProject.value?.projectDirectory ?? ''
+  editGitUrl.value = currentProject.value?.gitUrl ?? ''
+  showProjectInfoModal.value = true
+}
+
+async function saveProjectInfo() {
+  if (!editProjectName.value.trim()) {
+    message.warning('Project name is required')
+    return
+  }
+  savingProjectInfo.value = true
+  try {
+    await updateProject(projectId.value, {
+      projectName: editProjectName.value.trim(),
+      projectDescription: editProjectDescription.value.trim() || undefined,
+      projectDirectory: editProjectDirectory.value.trim() || undefined,
+      gitUrl: editGitUrl.value.trim() || undefined,
+    })
+    showProjectInfoModal.value = false
+    message.success('Project info updated')
+  } catch (err: any) {
+    message.error(err?.response?.data?.detail || 'Failed to update project info')
+  } finally {
+    savingProjectInfo.value = false
+  }
+}
 
 function openMembersModal() {
   showMembersModal.value = true
@@ -232,6 +273,9 @@ watch(
         <span class="text-xs text-gray-500 font-mono">{{ projectId.slice(0, 8) }}</span>
       </div>
       <div class="flex gap-2">
+        <n-button size="small" @click="openProjectInfoModal">
+          Info
+        </n-button>
         <n-button size="small" @click="openSchemaEditor">
           Schema
         </n-button>
@@ -246,6 +290,16 @@ watch(
           + Root Task
         </n-button>
       </div>
+    </div>
+
+    <!-- Project info bar -->
+    <div v-if="currentProject?.projectDirectory || currentProject?.gitUrl" class="mb-4 flex flex-wrap gap-x-4 gap-y-1 px-1">
+      <span v-if="currentProject?.projectDirectory" class="text-xs text-gray-500 font-mono truncate max-w-md" :title="currentProject.projectDirectory">
+        Dir: {{ currentProject.projectDirectory }}
+      </span>
+      <span v-if="currentProject?.gitUrl" class="text-xs text-gray-500 font-mono truncate max-w-md" :title="currentProject.gitUrl">
+        Git: {{ currentProject.gitUrl }}
+      </span>
     </div>
 
     <!-- Schema info -->
@@ -518,6 +572,62 @@ watch(
             <n-button @click="showTodoModal = false">Cancel</n-button>
             <n-button type="primary" :loading="savingTodo" @click="saveTodo">
               {{ editingTodo ? 'Update' : 'Create' }}
+            </n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
+
+    <!-- Project info modal -->
+    <n-modal v-model:show="showProjectInfoModal">
+      <n-card title="Project Info" :bordered="false" style="width: 500px; max-width: 90vw;">
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Project Name</label>
+            <n-input
+              v-model:value="editProjectName"
+              placeholder="Project name"
+              size="small"
+            />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Description</label>
+            <n-input
+              v-model:value="editProjectDescription"
+              type="textarea"
+              placeholder="Description (optional)"
+              :rows="2"
+              size="small"
+            />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Project Directory</label>
+            <n-input
+              v-model:value="editProjectDirectory"
+              placeholder="/path/to/project"
+              size="small"
+            />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Git URL</label>
+            <n-input
+              v-model:value="editGitUrl"
+              placeholder="https://github.com/user/repo.git"
+              size="small"
+            />
+          </div>
+        </div>
+
+        <template #action>
+          <div class="flex justify-end gap-2">
+            <n-button @click="showProjectInfoModal = false">Cancel</n-button>
+            <n-button
+              type="primary"
+              :loading="savingProjectInfo"
+              :disabled="!editProjectName.trim()"
+              @click="saveProjectInfo"
+            >
+              Save
             </n-button>
           </div>
         </template>

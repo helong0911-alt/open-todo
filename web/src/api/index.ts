@@ -123,8 +123,24 @@ export const keysRefresh = (keyId: string) =>
 export const projectsList = () =>
   http.get<Project[]>('/projects').then((r) => r.data)
 
-export const projectsCreate = (projectName: string, projectDescription?: string) =>
-  http.post<Project>('/projects/create', { projectName, projectDescription }).then((r) => r.data)
+export const projectsCreate = (
+  projectName: string,
+  projectDescription?: string,
+  projectDirectory?: string,
+  gitUrl?: string
+) =>
+  http.post<Project>('/projects/create', { projectName, projectDescription, projectDirectory, gitUrl }).then((r) => r.data)
+
+export const projectsUpdate = (
+  projectId: string,
+  data: {
+    projectName?: string
+    projectDescription?: string
+    projectDirectory?: string
+    gitUrl?: string
+  }
+) =>
+  http.post<Project>('/projects/update', { projectId, ...data }).then((r) => r.data)
 
 // ---- Schema ----
 export const schemaGet = (projectId: string) =>

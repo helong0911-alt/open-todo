@@ -38,7 +38,9 @@ logger = logging.getLogger(__name__)
 from api.app.api.projects import (
     list_projects as _rest_list_projects,
     create_project as _rest_create_project,
+    update_project as _rest_update_project,
     CreateProjectRequest,
+    UpdateProjectRequest,
 )
 from api.app.api.schemas import (
     get_schema as _rest_get_schema,
@@ -100,7 +102,8 @@ MCP_TOOLS = [
         "name": "list_projects",
         "description": (
             "List all projects owned by the authenticated user. "
-            "Returns an array of project objects with projectId, projectName, projectDescription."
+            "Returns an array of project objects with projectId, projectName, "
+            "projectDescription, projectDirectory, and gitUrl."
         ),
         "inputSchema": {
             "type": "object",
@@ -125,8 +128,49 @@ MCP_TOOLS = [
                     "type": "string",
                     "description": "Optional project description.",
                 },
+                "projectDirectory": {
+                    "type": "string",
+                    "description": "Optional local filesystem directory path for the project.",
+                },
+                "gitUrl": {
+                    "type": "string",
+                    "description": "Optional Git repository URL.",
+                },
             },
             "required": ["projectName"],
+        },
+    },
+    {
+        "name": "update_project",
+        "description": (
+            "Update project metadata (name, description, directory, git URL). "
+            "Only provided fields are updated; omitted fields remain unchanged."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "projectId": {
+                    "type": "string",
+                    "description": "UUID of the project to update.",
+                },
+                "projectName": {
+                    "type": "string",
+                    "description": "Updated project name.",
+                },
+                "projectDescription": {
+                    "type": "string",
+                    "description": "Updated project description.",
+                },
+                "projectDirectory": {
+                    "type": "string",
+                    "description": "Updated local filesystem directory path.",
+                },
+                "gitUrl": {
+                    "type": "string",
+                    "description": "Updated Git repository URL.",
+                },
+            },
+            "required": ["projectId"],
         },
     },
     {
@@ -671,6 +715,8 @@ def _dispatch(name: str, args: dict, user: User, session: Session) -> Any:
         return _do_list_projects(user, session)
     elif name == "create_project":
         return _do_create_project(args, user, session)
+    elif name == "update_project":
+        return _do_update_project(args, user, session)
     elif name == "get_project_schema":
         return _do_get_project_schema(args, user, session)
     elif name == "update_project_schema":
@@ -711,8 +757,25 @@ def _do_create_project(args: dict, user: User, session: Session) -> Any:
     body = CreateProjectRequest(
         projectName=args.get("projectName", ""),
         projectDescription=args.get("projectDescription"),
+        projectDirectory=args.get("projectDirectory"),
+        gitUrl=args.get("gitUrl"),
     )
     result = _rest_create_project(body=body, session=session, current_user=user)
+    return result.model_dump() if hasattr(result, "model_dump") else result
+
+
+def _do_update_project(args: dict, user: User, session: Session) -> Any:
+    project_id = args.get("projectId")
+    if not project_id:
+        raise HTTPException(status_code=400, detail="projectId is required.")
+    body = UpdateProjectRequest(
+        projectId=project_id,
+        projectName=args.get("projectName"),
+        projectDescription=args.get("projectDescription"),
+        projectDirectory=args.get("projectDirectory"),
+        gitUrl=args.get("gitUrl"),
+    )
+    result = _rest_update_project(body=body, session=session, current_user=user)
     return result.model_dump() if hasattr(result, "model_dump") else result
 
 
