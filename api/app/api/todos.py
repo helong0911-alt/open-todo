@@ -39,7 +39,13 @@ router = APIRouter(prefix="/todos", tags=["Todos"])
 # ---------------------------------------------------------------------------
 
 class TodoListRequest(BaseModel):
-    projectId: str = Field(..., description="Project ID to list todos for.")
+    projectId: Optional[str] = Field(
+        None,
+        description=(
+            "Project ID to list todos for. "
+            "If omitted, returns todos from all projects owned by the user."
+        ),
+    )
 
 
 class TodoCreateRequest(BaseModel):
@@ -327,24 +333,43 @@ def _is_descendant(session: Session, ancestor_id: str, target_id: str) -> bool:
     "/list",
     response_model=List[TodoResponse],
     summary="List todos for a project",
-    description="Returns all todos (flat list) for the specified project.",
+    description=(
+        "Returns all todos (flat list) for the specified project. "
+        "If projectId is omitted, returns todos from all projects owned by the user."
+    ),
 )
 def list_todos(
     body: TodoListRequest,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    _verify_project_access(session, body.projectId, current_user)
+    if body.projectId:
+        # --- Single project mode ---
+        _verify_project_access(session, body.projectId, current_user)
+        project_ids = [body.projectId]
+    else:
+        # --- All projects mode ---
+        projects = session.exec(
+            select(Project).where(Project.user_id == current_user.user_id)
+        ).all()
+        project_ids = [p.project_id for p in projects]
+        if not project_ids:
+            return []
 
+    # --- Fetch todos for all target projects ---
     todos = session.exec(
-        select(Todo).where(Todo.project_id == body.projectId)
+        select(Todo).where(Todo.project_id.in_(project_ids))
     ).all()
 
     # --- JIT healing (in-memory only, no write-back) ---
-    fields_def, current_sv = get_schema_for_project(session, body.projectId)
-
+    # Cache schema per project to avoid repeated lookups
+    schema_cache: Dict[str, tuple] = {}
     results: List[TodoResponse] = []
     for t in todos:
+        if t.project_id not in schema_cache:
+            schema_cache[t.project_id] = get_schema_for_project(session, t.project_id)
+        fields_def, current_sv = schema_cache[t.project_id]
+
         if fields_def and (t.schema_version or 0) < current_sv:
             raw = dict(t.content) if isinstance(t.content, dict) else {}
             healed, _ = heal_content(raw, fields_def)

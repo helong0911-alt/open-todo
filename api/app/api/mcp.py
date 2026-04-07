@@ -230,17 +230,18 @@ MCP_TOOLS = [
         "name": "list_todos",
         "description": (
             "List all todos (flat array) for a project. "
-            "Build a tree by grouping on parentId (null = root)."
+            "Build a tree by grouping on parentId (null = root). "
+            "If projectId is omitted, returns todos from all projects owned by the user."
         ),
         "inputSchema": {
             "type": "object",
             "properties": {
                 "projectId": {
                     "type": "string",
-                    "description": "UUID of the project.",
+                    "description": "UUID of the project. If omitted, returns todos from all projects.",
                 },
             },
-            "required": ["projectId"],
+            "required": [],
         },
     },
     {
@@ -809,8 +810,6 @@ def _do_update_project_schema(args: dict, user: User, session: Session) -> Any:
 
 def _do_list_todos(args: dict, user: User, session: Session) -> Any:
     project_id = args.get("projectId")
-    if not project_id:
-        raise HTTPException(status_code=400, detail="projectId is required.")
     body = TodoListRequest(projectId=project_id)
     result = _rest_list_todos(body=body, session=session, current_user=user)
     return [r.model_dump() if hasattr(r, "model_dump") else r for r in result]
